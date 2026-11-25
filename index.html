@@ -13,9 +13,19 @@
 .cursor-light i{width:4px;height:4px;border-radius:50%}
 .cursor-light b{width:30px;height:30px;margin:-15px;border-radius:50%;background:conic-gradient(#f34561,#ff973c,#e7c839,#51ca76,#27a8eb,#8958ed,#f34561);filter:blur(6px);transition:opacity .25s}
 @media(prefers-reduced-motion:reduce){.cursor-light{display:none}}
+
+.ambient-field{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.ambient-field span{position:absolute;width:66px;height:38px;animation:ambient-drift 18s ease-in-out infinite alternate}
+.ambient-field span:first-child{left:7%;top:23%}
+.ambient-field span:last-child{right:8%;bottom:22%;animation-delay:-12s;animation-direction:alternate-reverse}
+.ambient-field i{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--tone);top:var(--y);left:var(--x);opacity:.35;animation:ambient-breathe 9s ease-in-out var(--delay) infinite}
+@keyframes ambient-drift{from{transform:translate(-14px,9px)}to{transform:translate(17px,-12px)}}
+@keyframes ambient-breathe{0%,100%{opacity:.10}50%{opacity:.49}}
+@media(prefers-reduced-motion:reduce){.ambient-field span,.ambient-field i{animation:none}}
 </style>
 </head>
 <body>
+<div class="ambient-field" aria-hidden="true"><span><i style="--x:0px;--y:19px;--tone:#f34561;--delay:-2s"></i><i style="--x:24px;--y:12px;--tone:#ff973c;--delay:-5s"></i><i style="--x:54px;--y:18px;--tone:#e7c839;--delay:-7s"></i></span><span><i style="--x:0px;--y:24px;--tone:#51ca76;--delay:-6s"></i><i style="--x:33px;--y:17px;--tone:#27a8eb;--delay:-3s"></i><i style="--x:58px;--y:5px;--tone:#8958ed;--delay:-1s"></i></span></div>
 <div class="cursor-light" aria-hidden="true"><b></b></div>
 <canvas class="glow" aria-hidden="true"></canvas>
 <main class="shell" aria-label="COMPETE">
