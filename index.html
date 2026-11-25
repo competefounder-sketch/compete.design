@@ -7,9 +7,33 @@
 <meta name="description" content="COMPETE">
 <title>COMPETE</title>
 <link rel="stylesheet" href="compete.css">
+<style>
+.motion-field{position:fixed;inset:0;overflow:hidden;pointer-events:none}
+.motion-field svg{position:absolute;width:clamp(260px,38vw,740px);height:auto;overflow:visible}
+.motion-field .upper{left:-8%;top:1%;transform:rotate(180deg)}
+.motion-field .lower{right:-8%;bottom:1%}
+.motion-field .contour{fill:none;stroke:var(--ink);stroke-opacity:.09;stroke-width:1}
+.motion-field .ribbon{fill:none;stroke:url(#field-spectrum);stroke-width:3;stroke-dasharray:31 69;opacity:.58}
+.motion-field .orbit{transform-origin:center}
+@media(prefers-reduced-motion:no-preference){
+  .motion-field .orbit{animation:field-drift 11s ease-in-out infinite alternate}
+  .motion-field .upper .orbit{animation-delay:-6s}
+  .motion-field .ribbon{animation:field-trace 7s linear infinite}
+  .motion-field .upper .ribbon{animation-delay:-3s}
+  .motion-field .marker{offset-path:path("M20 18 L172 170 L20 322");animation:field-run 7s ease-in-out infinite}
+  .motion-field .upper .marker{animation-delay:-3s}
+}
+@keyframes field-drift{from{transform:translate(-8px,-5px)}to{transform:translate(14px,8px)}}
+@keyframes field-trace{to{stroke-dashoffset:-100}}
+@keyframes field-run{0%{offset-distance:0%;opacity:0}12%,86%{opacity:.65}100%{offset-distance:100%;opacity:0}}
+@media(max-width:650px){.motion-field .upper{left:-70px;top:2%}.motion-field .lower{right:-70px;bottom:3%}}
+</style>
 </head>
 <body>
-<div class="background" aria-hidden="true"><i class="cross tl" aria-hidden="true"></i><i class="cross tr" aria-hidden="true"></i><i class="cross bl" aria-hidden="true"></i><i class="cross br" aria-hidden="true"></i></div>
+<div class="motion-field" aria-hidden="true">
+<svg class="upper" viewBox="0 0 225 340"><defs><linearGradient id="field-spectrum" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#ff754b"/><stop offset=".24" stop-color="#e6b528"/><stop offset=".48" stop-color="#47ba85"/><stop offset=".73" stop-color="#369bde"/><stop offset="1" stop-color="#8959e8"/></linearGradient><path id="field-contour" d="M20 18 172 170 20 322" pathLength="100"/></defs><g class="orbit"><g class="contour"><use href="#field-contour"/><use href="#field-contour" x="12"/><use href="#field-contour" x="34"/></g><use class="ribbon" href="#field-contour" x="12"/><rect class="marker" x="-2.5" y="-2.5" width="5" height="5" fill="#575b51" opacity=".35"/></g></svg>
+<svg class="lower" viewBox="0 0 225 340"><g class="orbit"><g class="contour"><use href="#field-contour"/><use href="#field-contour" x="12"/><use href="#field-contour" x="34"/></g><use class="ribbon" href="#field-contour" x="12"/><rect class="marker" x="-2.5" y="-2.5" width="5" height="5" fill="#575b51" opacity=".35"/></g></svg>
+</div>
 <canvas class="glow" aria-hidden="true"></canvas>
 <main class="shell" aria-label="COMPETE">
 <div class="landing home-hero">
