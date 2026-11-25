@@ -15,8 +15,9 @@
 @media(prefers-reduced-motion:reduce){.cursor-light{display:none}}
 
 .ambient-waves{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
-.login-cta{display:inline-flex;align-items:center;justify-content:center;justify-self:center;min-height:46px;padding:7px 28px;color:var(--ink);border:1.5px solid currentColor;border-radius:4px;text-decoration:none}
-.login-cta svg{display:block;height:24px;width:auto}
+.brand-lockup{width:min(100%,628px);margin-inline:auto}
+.login-cta{position:relative;display:flex;align-items:center;justify-content:center;margin-left:50.7%;margin-top:-2.6%;width:43.05%;min-height:44px;padding:5px 8px;color:var(--ink);border:1.5px solid currentColor;border-radius:0;text-decoration:none}
+.login-cta svg{display:block;width:min(100%,175px);height:auto}
 .login-cta:hover,.login-cta:focus-visible{color:var(--paper);background:var(--ink);border-color:var(--ink)}
 .login-cta:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
 </style>
@@ -24,14 +25,12 @@
 <body>
 <canvas class="ambient-waves" aria-hidden="true"></canvas>
 <div class="cursor-light" aria-hidden="true"><b></b></div>
-<canvas class="glow" aria-hidden="true"></canvas>
 <main class="shell" aria-label="COMPETE">
 <div class="landing home-hero">
-<div class="stage">
-<button type="button" class="replay" aria-label="Chiudi il logo COMPETE" aria-pressed="false">
-<svg class="logo" viewBox="0 75 1600 415" role="img" aria-label="Logo COMPETE">
-<defs><clipPath id="reveal"><rect id="window" x="329" y="145" width="1067" height="282"/></clipPath>
-<linearGradient id="rainbow" class="animated-spectrum" x1="0%" y1="100%" x2="100%" y2="0%">
+<div class="brand-lockup">
+<svg class="logo" viewBox="120 146 1361 280" role="img" aria-label="Logo COMPETE">
+<defs>
+<linearGradient id="rainbow" x1="0%" y1="100%" x2="100%" y2="0%">
 <stop offset="0%" stop-color="#fc4449"/>
 <stop offset="20%" stop-color="#ff9839"/>
 <stop offset="37%" stop-color="#fce64d"/>
@@ -41,13 +40,11 @@
 <stop offset="100%" stop-color="#b348ee"/>
 </linearGradient></defs>
 <polygon id="left" points="120,264 237,146 325,146 207,264 325,381 237,381"/>
-<image href="wordmark.png" x="329" y="146" width="1067" height="279" clip-path="url(#reveal)"/>
-<polygon id="right" points="1416,296 1481,296 1481,328 1481,360 1416,360 1416,328"/>
+<image href="wordmark.png" x="329" y="146" width="1067" height="279"/>
 <polygon id="rainbow-dot" fill="url(#rainbow)" points="1416,296 1481,296 1481,328 1481,360 1416,360 1416,328"/>
 </svg>
-</button>
+<a class="login-cta" href="login.html" aria-label="Leave your mark."><svg viewBox="0 -780 8420 1030" aria-hidden="true"><path fill="currentColor" d="M68 0H431V-131H205V-739H68ZM1043 -218C1047 -238 1048 -250 1048 -270C1048 -441 927 -567 762 -567C599 -567 470 -438 470 -275C470 -113 601 13 770 13C861 13 932 -20 990 -87C1011 -113 1025 -136 1034 -164H889C855 -124 822 -109 767 -109C688 -109 630 -151 614 -218ZM610 -335C631 -407 685 -445 764 -445C846 -445 900 -406 917 -335ZM1695 -554H1573V-480C1527 -541 1472 -567 1392 -567C1228 -567 1110 -444 1110 -275C1110 -108 1227 13 1389 13C1467 13 1520 -11 1573 -72V0H1695ZM1406 -445C1501 -445 1569 -374 1569 -273C1569 -233 1553 -187 1529 -159C1502 -126 1459 -109 1408 -109C1311 -109 1244 -175 1244 -272C1244 -373 1311 -445 1406 -445ZM1964 0H2070L2293 -554H2143L2017 -187L1889 -554H1741ZM2903 -218C2907 -238 2908 -250 2908 -270C2908 -441 2787 -567 2622 -567C2459 -567 2330 -438 2330 -275C2330 -113 2461 13 2630 13C2721 13 2792 -20 2850 -87C2871 -113 2885 -136 2894 -164H2749C2715 -124 2682 -109 2627 -109C2548 -109 2490 -151 2474 -218ZM2470 -335C2491 -407 2545 -445 2624 -445C2706 -445 2760 -406 2777 -335ZM3325 185H3468L3788 -554H3634L3501 -195L3378 -554H3226L3429 -52ZM4123 -567C3962 -567 3830 -436 3830 -277C3830 -117 3962 13 4124 13C4285 13 4419 -117 4419 -273C4419 -438 4290 -567 4123 -567ZM4124 -445C4213 -445 4285 -370 4285 -277C4285 -184 4213 -109 4125 -109C4035 -109 3964 -184 3964 -279C3964 -370 4036 -445 4124 -445ZM4987 -554H4854V-293C4854 -219 4849 -184 4833 -160C4814 -127 4777 -109 4732 -109C4698 -109 4672 -120 4654 -144C4635 -168 4627 -208 4627 -283V-554H4494V-257C4494 -163 4505 -114 4536 -69C4573 -16 4632 13 4705 13C4772 13 4813 -4 4864 -53V0H4987ZM5094 0H5227V-308C5224 -390 5266 -436 5346 -439V-567H5336C5279 -567 5251 -551 5216 -500V-554H5094ZM5694 0H5827V-273C5827 -328 5832 -365 5841 -388C5857 -425 5890 -445 5936 -445C5971 -445 6002 -432 6020 -410C6036 -389 6043 -356 6043 -304V0H6176V-273C6176 -335 6181 -366 6195 -392C6212 -426 6246 -445 6288 -445C6321 -445 6349 -433 6367 -411C6385 -390 6392 -359 6392 -304V0H6525V-320C6525 -387 6513 -441 6489 -479C6454 -535 6385 -567 6300 -567C6222 -567 6168 -541 6123 -481C6085 -542 6037 -567 5960 -567C5895 -567 5855 -549 5816 -502V-554H5694ZM7195 -554H7073V-480C7027 -541 6972 -567 6892 -567C6728 -567 6610 -444 6610 -275C6610 -108 6727 13 6889 13C6967 13 7020 -11 7073 -72V0H7195ZM6906 -445C7001 -445 7069 -374 7069 -273C7069 -233 7053 -187 7029 -159C7002 -126 6959 -109 6908 -109C6811 -109 6744 -175 6744 -272C6744 -373 6811 -445 6906 -445ZM7294 0H7427V-308C7424 -390 7466 -436 7546 -439V-567H7536C7479 -567 7451 -551 7416 -500V-554H7294ZM7614 0H7747V-259L7936 0H8115L7885 -283L8083 -554H7924L7747 -293V-739H7614ZM8212 0H8345V-128H8212Z"/></svg></a>
 </div>
-<a class="login-cta" href="login.html" aria-label="Login"><svg viewBox="0 -780 2580 1050" aria-hidden="true"><path fill="currentColor" d="M68 0H431V-131H205V-739H68ZM763 -567C602 -567 470 -436 470 -277C470 -117 602 13 764 13C925 13 1059 -117 1059 -273C1059 -438 930 -567 763 -567ZM764 -445C853 -445 925 -370 925 -277C925 -184 853 -109 765 -109C675 -109 604 -184 604 -279C604 -370 676 -445 764 -445ZM1564 -554V-484C1522 -540 1463 -567 1383 -567C1226 -567 1110 -445 1110 -281C1110 -110 1224 13 1382 13C1460 13 1512 -12 1564 -73C1559 46 1508 104 1409 104C1347 104 1309 88 1270 45H1119C1164 156 1268 221 1404 221C1504 221 1583 186 1635 120C1674 69 1691 1 1691 -105V-554ZM1398 -445C1493 -445 1558 -377 1558 -275C1558 -175 1496 -109 1400 -109C1305 -109 1244 -174 1244 -275C1244 -377 1305 -445 1398 -445ZM1794 0H1927V-554H1794ZM1794 -614H1927V-739H1794ZM2034 0H2167V-261C2167 -335 2172 -367 2189 -394C2210 -427 2244 -445 2287 -445C2322 -445 2349 -433 2367 -410C2385 -386 2393 -345 2393 -271V0H2526V-297C2526 -396 2516 -444 2486 -487C2450 -539 2390 -567 2313 -567C2249 -567 2206 -549 2157 -501V-554H2034Z"/></svg></a>
 <p class="scroll-hint" lang="en">
 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15m-6-6 6 6 6-6"/></svg>
 <span>Scroll down for more</span>
