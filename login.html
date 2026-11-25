@@ -7,6 +7,25 @@
 <meta name="description" content="COMPETE">
 <title>Login | COMPETE</title>
 <link rel="stylesheet" href="compete.css">
+<style>
+.entry-logo,.entry-rule{display:none;pointer-events:none;position:fixed;z-index:1}
+.entering .entry-logo,.entering .entry-rule{display:block}
+.entry-rule{height:1px;background:#16181566;transform-origin:0 50%}
+.entering .email-field{border-bottom-color:transparent}
+.entering .entry-logo{overflow:visible}
+</style>
+<script>
+let loginOrigin;
+try {
+  const entry = JSON.parse(sessionStorage.getItem('compete-login-entry'));
+  sessionStorage.removeItem('compete-login-entry');
+  if (entry && Date.now()-entry.time < 15000 && entry.width > 0 &&
+      !matchMedia('(prefers-reduced-motion: reduce)').matches && Element.prototype.animate) {
+    loginOrigin = entry;
+    document.documentElement.classList.add('entering');
+  }
+} catch {}
+</script>
 </head>
 <body>
 <div class="background" aria-hidden="true"><i class="cross tl" aria-hidden="true"></i><i class="cross tr" aria-hidden="true"></i><i class="cross bl" aria-hidden="true"></i><i class="cross br" aria-hidden="true"></i></div>
@@ -22,5 +41,77 @@
 </div>
 </div>
 </main>
+<template id="entry-art"><svg class="logo entry-logo" viewBox="120 146 1361 280" aria-hidden="true">
+<defs>
+<linearGradient class="animated-spectrum" id="rainbow" x1="0%" y1="100%" x2="100%" y2="0%">
+<stop offset="0%" stop-color="#fc4449"/>
+<stop offset="20%" stop-color="#ff9839"/>
+<stop offset="37%" stop-color="#fce64d"/>
+<stop offset="53%" stop-color="#67dc54"/>
+<stop offset="70%" stop-color="#32c7ef"/>
+<stop offset="84%" stop-color="#6358fa"/>
+<stop offset="100%" stop-color="#b348ee"/>
+</linearGradient></defs>
+<polygon id="left" points="120,264 237,146 325,146 207,264 325,381 237,381"/>
+<image href="wordmark.png" x="329" y="146" width="1067" height="279"/>
+<polygon id="rainbow-dot" fill="url(#rainbow)" points="1416,296 1481,296 1481,328 1481,360 1416,360 1416,328"/>
+</svg></template>
+<script>
+if (loginOrigin) {
+  const root = document.documentElement;
+  const art = document.querySelector('#entry-art').content.firstElementChild.cloneNode(true);
+  const rule = document.createElement('span');
+  rule.className = 'entry-rule';
+  rule.setAttribute('aria-hidden','true');
+  Object.assign(art.style, {left:loginOrigin.x+'px', top:loginOrigin.y+'px', width:loginOrigin.width+'px'});
+  document.body.append(art, rule);
+  const animations = [];
+  function finish() {
+    root.classList.remove('entering');
+    animations.forEach(animation => animation.cancel());
+    art.remove();
+    rule.remove();
+    window.removeEventListener('pagehide', finish);
+    window.removeEventListener('resize', finish);
+  }
+  function play(element, frames, duration, delay=0) {
+    const animation = element.animate(frames, {duration, delay, fill:'both', easing:'cubic-bezier(.4,0,.2,1)'});
+    animations.push(animation);
+    return animation;
+  }
+  try {
+    const field = document.querySelector('.email-field');
+    const box = field.getBoundingClientRect();
+    const icon = field.querySelector('svg').getBoundingClientRect();
+    const dot = art.querySelector('#rainbow-dot').getBoundingClientRect();
+    const chevron = art.querySelector('#left');
+    const unitsPerPixel = 1361 / art.getBoundingClientRect().width;
+    const word = art.querySelector('image');
+    const mark = art.querySelector('#rainbow-dot');
+    // Collapse the word onto the envelope, then stretch the square into the input baseline.
+    for (const piece of [chevron,word]) {
+      const r = piece.getBoundingClientRect();
+      const dx = (icon.x+icon.width/2-r.x-r.width/2)*unitsPerPixel;
+      const dy = (icon.y+icon.height/2-r.y-r.height/2)*unitsPerPixel;
+      piece.style.transformBox = 'fill-box';
+      piece.style.transformOrigin = 'center';
+      const scale = piece === chevron ? icon.width/r.width : .08;
+      play(piece,[{transform:'none',opacity:1},{transform:'translate('+dx+'px,'+dy+'px) scale('+scale+')',opacity:0}],piece === chevron ? 640 : 490);
+    }
+    Object.assign(rule.style,{left:box.left+'px',top:(box.bottom-1)+'px',width:box.width+'px'});
+    const dx = dot.left-box.left, dy = dot.top+dot.height/2-(box.bottom-.5);
+    play(rule,[{transform:'translate('+dx+'px,'+dy+'px) scale('+dot.width/box.width+','+dot.height+')',opacity:0},
+      {opacity:.9,offset:.28},{transform:'none',opacity:1}],720);
+    play(mark,[{opacity:1},{opacity:0}],230);
+    play(document.querySelector('.background'),[{clipPath:'inset(48% 44%)',opacity:0},{clipPath:'inset(0% 0%)',opacity:1}],740);
+    for (const el of [field.querySelector('svg'),document.querySelector('.email-hint'),document.querySelector('.page-link')]) {
+      play(el,[{opacity:0},{opacity:1}],240,470);
+    }
+    window.addEventListener('pagehide',finish,{once:true});
+    window.addEventListener('resize',finish,{once:true});
+    Promise.all(animations.map(animation=>animation.finished)).then(finish,()=>{});
+  } catch { finish(); }
+}
+</script>
 </body>
 </html>
