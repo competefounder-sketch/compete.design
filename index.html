@@ -8,28 +8,15 @@
 <title>COMPETE</title>
 <link rel="stylesheet" href="compete.css">
 <style>
-.ambient-dots{position:fixed;inset:0;overflow:hidden;pointer-events:none}
-.ambient-dots i{position:absolute;left:var(--x);top:var(--y);width:3px;height:3px;border-radius:50%;background:var(--color);opacity:.23}
-@media(prefers-reduced-motion:no-preference){
-  .ambient-dots i{animation:ambient-float 13s ease-in-out var(--delay) infinite both}
-}
-@keyframes ambient-float{
-  0%,85%,100%{opacity:0}
-  0%{transform:translate(0,6px)}
-  40%{opacity:.43}
-  85%,100%{transform:translate(5px,-9px)}
-}
+.cursor-light{position:fixed;inset:0;z-index:2;overflow:hidden;pointer-events:none}
+.cursor-light i,.cursor-light b{position:absolute;top:0;left:0;opacity:0}
+.cursor-light i{width:4px;height:4px;border-radius:50%}
+.cursor-light b{width:30px;height:30px;margin:-15px;border-radius:50%;background:conic-gradient(#f34561,#ff973c,#e7c839,#51ca76,#27a8eb,#8958ed,#f34561);filter:blur(6px);transition:opacity .25s}
+@media(prefers-reduced-motion:reduce){.cursor-light{display:none}}
 </style>
 </head>
 <body>
-<div class="ambient-dots" aria-hidden="true">
-  <i style="--x:11%;--y:25%;--color:#f34561;--delay:-2s"></i>
-  <i style="--x:14%;--y:27%;--color:#ff973c;--delay:-3s"></i>
-  <i style="--x:8%;--y:29%;--color:#e7c839;--delay:-1s"></i>
-  <i style="--x:84%;--y:71%;--color:#51ca76;--delay:-8s"></i>
-  <i style="--x:88%;--y:74%;--color:#27a8eb;--delay:-9s"></i>
-  <i style="--x:90%;--y:70%;--color:#8958ed;--delay:-7s"></i>
-</div>
+<div class="cursor-light" aria-hidden="true"><b></b></div>
 <canvas class="glow" aria-hidden="true"></canvas>
 <main class="shell" aria-label="COMPETE">
 <div class="landing home-hero">
@@ -100,5 +87,49 @@
 </section>
 </main>
 <script src="compete.js" defer></script>
+<script>
+(() => {
+  const layer = document.querySelector('.cursor-light');
+  const halo = layer.querySelector('b');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const colors = ['#f34561','#ff973c','#e7c839','#51ca76','#27a8eb','#8958ed'];
+  let last = null;
+  let color = 0;
+  function dot(x, y) {
+    if (layer.childElementCount >= 20) layer.children[1].remove();
+    const point = document.createElement('i');
+    point.style.backgroundColor = colors[color++ % colors.length];
+    point.style.left = (x - 2) + 'px';
+    point.style.top = (y - 2) + 'px';
+    layer.append(point);
+    const fade = point.animate([
+      {opacity:.60, transform:'scale(1)'},
+      {opacity:0, transform:'translateY(-3px) scale(.45)'}
+    ], {duration:650, easing:'ease-out'});
+    fade.onfinish = () => point.remove();
+  }
+  function follow(event) {
+    if (!event.isPrimary || reduced.matches) return;
+    const x = event.clientX, y = event.clientY;
+    halo.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+    halo.style.opacity = '.16';
+    if (!last) { dot(x,y); last = {x,y}; return; }
+    const dx = x - last.x, dy = y - last.y;
+    const distance = Math.hypot(dx,dy);
+    if (distance < 9) return;
+    const steps = Math.min(5,Math.floor(distance / 9));
+    for (let n = 1; n <= steps; n++) dot(last.x + dx*n/steps, last.y + dy*n/steps);
+    last = {x,y};
+  }
+  function clear() { halo.style.opacity = '0'; last = null; }
+  window.addEventListener('pointermove', follow, {passive:true});
+  window.addEventListener('pointerdown', follow, {passive:true});
+  window.addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') clear(); });
+  window.addEventListener('pointercancel', clear);
+  document.documentElement.addEventListener('pointerleave', clear);
+  window.addEventListener('blur', clear);
+  reduced.addEventListener('change', clear);
+})();
+</script>
 </body>
 </html>
