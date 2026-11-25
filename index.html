@@ -14,14 +14,7 @@
 .cursor-light b{width:30px;height:30px;margin:-15px;border-radius:50%;background:conic-gradient(#f34561,#ff973c,#e7c839,#51ca76,#27a8eb,#8958ed,#f34561);filter:blur(6px);transition:opacity .25s}
 @media(prefers-reduced-motion:reduce){.cursor-light{display:none}}
 
-.ambient-field{position:fixed;inset:0;pointer-events:none;overflow:hidden}
-.ambient-field span{position:absolute;width:66px;height:38px;animation:ambient-drift 18s ease-in-out infinite alternate}
-.ambient-field span:first-child{left:7%;top:23%}
-.ambient-field span:last-child{right:8%;bottom:22%;animation-delay:-12s;animation-direction:alternate-reverse}
-.ambient-field i{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--tone);top:var(--y);left:var(--x);opacity:.35;animation:ambient-breathe 9s ease-in-out var(--delay) infinite}
-@keyframes ambient-drift{from{transform:translate(-14px,9px)}to{transform:translate(17px,-12px)}}
-@keyframes ambient-breathe{0%,100%{opacity:.10}50%{opacity:.49}}
-@media(prefers-reduced-motion:reduce){.ambient-field span,.ambient-field i{animation:none}}
+.ambient-waves{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
 .login-cta{display:inline-flex;align-items:center;justify-content:center;justify-self:center;min-height:46px;padding:7px 28px;color:var(--ink);border:1.5px solid currentColor;border-radius:4px;text-decoration:none}
 .login-cta svg{display:block;height:24px;width:auto}
 .login-cta:hover,.login-cta:focus-visible{color:var(--paper);background:var(--ink);border-color:var(--ink)}
@@ -29,7 +22,7 @@
 </style>
 </head>
 <body>
-<div class="ambient-field" aria-hidden="true"><span><i style="--x:0px;--y:19px;--tone:#f34561;--delay:-2s"></i><i style="--x:24px;--y:12px;--tone:#ff973c;--delay:-5s"></i><i style="--x:54px;--y:18px;--tone:#e7c839;--delay:-7s"></i></span><span><i style="--x:0px;--y:24px;--tone:#51ca76;--delay:-6s"></i><i style="--x:33px;--y:17px;--tone:#27a8eb;--delay:-3s"></i><i style="--x:58px;--y:5px;--tone:#8958ed;--delay:-1s"></i></span></div>
+<canvas class="ambient-waves" aria-hidden="true"></canvas>
 <div class="cursor-light" aria-hidden="true"><b></b></div>
 <canvas class="glow" aria-hidden="true"></canvas>
 <main class="shell" aria-label="COMPETE">
@@ -138,6 +131,62 @@
   document.documentElement.addEventListener('pointerleave', clear);
   window.addEventListener('blur', clear);
   reduced.addEventListener('change', clear);
+})();
+</script>
+<script>
+(() => {
+  const canvas = document.querySelector('.ambient-waves');
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  let width, height, frame, previous, phase = 0;
+  function paint() {
+    ctx.clearRect(0, 0, width, height);
+    const narrow = width < 650;
+    const count = narrow ? 32 : Math.min(86, Math.ceil(width / 17));
+    const radius = narrow ? 1.85 : 2.45;
+    for (let band = 0; band < 2; band++) {
+      for (let row = 0; row < 5; row++) {
+        for (let i = -1; i <= count + 1; i++) {
+          const flow = phase * .32 + row * .12;
+          const u = (i + (flow - Math.floor(flow))) / count;
+          const t = band ? 1 - u : u;
+          const wave = 5.8 * u + phase * .63 + band * 2.6;
+          const ripple = 9 * u - phase * .45 + row * .24;
+          const spread = .011 + .007 * (1 + Math.sin(wave));
+          const y = .17 + .058 * Math.sin(wave) + .025 * Math.sin(ripple) + (row - 2) * spread;
+          const light = .5 + .5 * Math.cos(ripple + row * .4);
+          ctx.fillStyle = 'hsla(' + ((325 + 300*u + phase*7 + band*75 + row*5) % 360) + ',78%,49%,' + (.31 + .49*light) + ')';
+          ctx.beginPath();
+          ctx.arc(t*width, (band ? 1-y : y)*height, radius*(.72+.55*light), 0, 2*Math.PI);
+          ctx.fill();
+        }
+      }
+    }
+  }
+  function tick(now) {
+    if (previous !== undefined) phase += Math.min(.1, (now-previous)/1000);
+    previous = now;
+    paint();
+    frame = requestAnimationFrame(tick);
+  }
+  function refresh() {
+    cancelAnimationFrame(frame);
+    previous = undefined;
+    if (document.hidden) return;
+    width = canvas.clientWidth;
+    height = canvas.clientHeight;
+    const scale = Math.min(2, window.devicePixelRatio || 1);
+    canvas.width = Math.round(width * scale);
+    canvas.height = Math.round(height * scale);
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+    paint();
+    if (!motion.matches) frame = requestAnimationFrame(tick);
+  }
+  window.addEventListener('resize', refresh);
+  document.addEventListener('visibilitychange', refresh);
+  motion.addEventListener('change', refresh);
+  refresh();
 })();
 </script>
 </body>
