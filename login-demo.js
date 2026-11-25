@@ -137,7 +137,6 @@ function joinMarks() {
   requestAnimationFrame(draw);
 }
 
-email.addEventListener('input', () => form.toggleAttribute('data-preview', email.value.length > 0));
 form.addEventListener('submit', event => {
   event.preventDefault();
   if (form.dataset.step === 'email') {

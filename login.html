@@ -13,20 +13,21 @@
 .entry-rule{height:1px;background:#16181566;transform-origin:0 50%}
 .entering .email-field{border-bottom-color:transparent}
 .entering .entry-logo{overflow:visible}
+.entering .mark-left{z-index:2}
+.field-home{position:absolute;left:0;top:0;width:44px;height:100%;z-index:3}
+.field-home:focus-visible{outline:2px solid currentColor;outline-offset:-2px}
+.login:not([data-step="email"]) .field-home{display:none}
 
 .login .email-field{position:relative;height:50px;padding-inline:44px}
 .email-field .field-mark{position:absolute;top:50%;transform:translateY(-50%);width:calc(20px + var(--join,0)*20px);height:auto;pointer-events:none;fill:currentColor;stroke:none}
 .email-field .mark-left{left:calc(12px + var(--join,0)*(50% - 53px))}
-.email-field .mark-right{right:calc(12px + var(--join,0)*(50% - 53px));opacity:0}
+.email-field .mark-right{right:calc(12px + var(--join,0)*(50% - 53px))}
 .send-step{position:absolute;right:0;top:0;width:44px;height:100%;display:grid;place-items:center;border:0;background:transparent;color:inherit;cursor:pointer;padding:0}
 .send-step:focus-visible{outline:2px solid currentColor;outline-offset:-2px}
-.login[data-preview] .mark-right,.login[data-step="password"] .mark-right,.login[data-step="done"] .mark-right{opacity:1}
-.login[data-preview] .send-step svg,.login[data-step="password"] .send-step svg{opacity:0}
 .login[data-step="done"] .email-field{border-color:transparent}
 .login[data-step="done"] .email-hint{visibility:hidden}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .login [hidden]{display:none}
-@media(prefers-reduced-motion:no-preference){.mark-right,.send-step svg{transition:opacity 160ms ease-out}}
 </style>
 <script>
 let loginOrigin;
@@ -50,6 +51,7 @@ try {
 <form class="login" data-step="email" novalidate aria-label="Accesso dimostrativo" autocomplete="off">
 <div class="email-field">
 <svg class="field-mark mark-left" viewBox="0 0 205 235" aria-hidden="true"><path d="M0 118 117 0h88L87 118l118 117h-88Z"/></svg>
+<a href="./" class="field-home" aria-label="Torna alla homepage"></a>
 <input id="demo-email" type="text" inputmode="email" enterkeyhint="next" autocapitalize="none" autocomplete="off" spellcheck="false" aria-labelledby="step-label">
 <input id="demo-password" type="password" enterkeyhint="go" autocomplete="off" aria-labelledby="step-label" hidden disabled>
 <svg class="field-mark mark-right" viewBox="0 0 205 235" aria-hidden="true"><defs><linearGradient class="animated-spectrum" id="field-spectrum" x1="0%" y1="100%" x2="100%" y2="0%">
@@ -61,7 +63,7 @@ try {
 <stop offset="84%" stop-color="#6358fa"/>
 <stop offset="100%" stop-color="#b348ee"/>
 </linearGradient></defs><path fill="url(#field-spectrum)" d="M0 0h88l117 118-117 117H0l118-117Z"/></svg>
-<button class="send-step" type="submit" aria-label="Continua"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></button>
+<button class="send-step" type="submit" aria-label="Continua"></button>
 </div>
 <p id="step-label" class="email-hint" lang="en">Email</p>
 <span class="sr-only" role="status" aria-live="polite"></span>
@@ -99,7 +101,6 @@ if (loginOrigin) {
     art.remove();
     rule.remove();
     window.removeEventListener('pagehide', finish);
-    window.removeEventListener('resize', finish);
   }
   function play(element, frames, duration, delay=0) {
     const animation = element.animate(frames, {duration, delay, fill:'both', easing:'cubic-bezier(.4,0,.2,1)'});
@@ -109,33 +110,39 @@ if (loginOrigin) {
   try {
     const field = document.querySelector('.email-field');
     const box = field.getBoundingClientRect();
-    const icon = field.querySelector('svg').getBoundingClientRect();
+    const fieldChevron = field.querySelector('.mark-left');
+    const icon = fieldChevron.getBoundingClientRect();
     const dot = art.querySelector('#rainbow-dot').getBoundingClientRect();
     const chevron = art.querySelector('#left');
     const unitsPerPixel = 1361 / art.getBoundingClientRect().width;
     const word = art.querySelector('image');
     const mark = art.querySelector('#rainbow-dot');
-    // Collapse the word onto the field chevron, then stretch the square into the input baseline.
-    for (const piece of [chevron,word]) {
-      const r = piece.getBoundingClientRect();
-      const dx = (icon.x+icon.width/2-r.x-r.width/2)*unitsPerPixel;
-      const dy = (icon.y+icon.height/2-r.y-r.height/2)*unitsPerPixel;
-      piece.style.transformBox = 'fill-box';
-      piece.style.transformOrigin = 'center';
-      const scale = piece === chevron ? icon.width/r.width : .08;
-      play(piece,[{transform:'none',opacity:1},{transform:'translate('+dx+'px,'+dy+'px) scale('+scale+')',opacity:0}],piece === chevron ? 640 : 490);
-    }
+    // Move the actual field glyph from the logo's position, keeping its fill solid.
+    const from = chevron.getBoundingClientRect();
+    const dxIcon = from.left + from.width/2 - icon.left - icon.width/2;
+    const dyIcon = from.top + from.height/2 - icon.top - icon.height/2;
+    chevron.remove();
+    play(fieldChevron, [
+      {transform:'translateY(-50%) translate('+dxIcon+'px,'+dyIcon+'px) scale('+from.width/icon.width+')'},
+      {transform:'translateY(-50%)'}
+    ], 680);
+
+    const r = word.getBoundingClientRect();
+    const wordX = (icon.left + icon.width/2 - r.left - r.width/2) * unitsPerPixel;
+    const wordY = (icon.top + icon.height/2 - r.top - r.height/2) * unitsPerPixel;
+    word.style.transformBox = 'fill-box';
+    word.style.transformOrigin = 'center';
+    play(word,[{transform:'none',opacity:1},{transform:'translate('+wordX+'px,'+wordY+'px) scale(.08)',opacity:0}],490);
     Object.assign(rule.style,{left:box.left+'px',top:(box.bottom-1)+'px',width:box.width+'px'});
     const dx = dot.left-box.left, dy = dot.top+dot.height/2-(box.bottom-.5);
     play(rule,[{transform:'translate('+dx+'px,'+dy+'px) scale('+dot.width/box.width+','+dot.height+')',opacity:0},
       {opacity:.9,offset:.28},{transform:'none',opacity:1}],720);
     play(mark,[{opacity:1},{opacity:0}],230);
     play(document.querySelector('.background'),[{clipPath:'inset(48% 44%)',opacity:0},{clipPath:'inset(0% 0%)',opacity:1}],740);
-    for (const el of [field.querySelector('svg'),document.querySelector('.send-step'),document.querySelector('.email-hint'),document.querySelector('.page-link')]) {
+    for (const el of [field.querySelector('.mark-right'),document.querySelector('.email-hint'),document.querySelector('.page-link')]) {
       play(el,[{opacity:0},{opacity:1}],240,470);
     }
     window.addEventListener('pagehide',finish,{once:true});
-    window.addEventListener('resize',finish,{once:true});
     Promise.all(animations.map(animation=>animation.finished)).then(finish,()=>{});
   } catch { finish(); }
 }
