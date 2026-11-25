@@ -20,6 +20,17 @@
 .login-cta svg{display:block;width:auto;max-width:94%;height:85%}
 .login-cta::after{content:"";position:absolute;right:0;top:0;width:100%;min-width:44px;min-height:44px;height:100%}
 .login-cta:focus-visible{outline:2px dashed currentColor;outline-offset:3px}
+.square-particles{pointer-events:none}
+.square-particles circle{opacity:0}
+@media(prefers-reduced-motion:no-preference){
+  .square-particles circle{animation:square-particle-rise var(--life) linear var(--delay) infinite}
+}
+@keyframes square-particle-rise{
+  0%{opacity:0;transform:translate(0,0)}
+  10%{opacity:.84}
+  55%{opacity:.7}
+  100%{opacity:0;transform:translate(var(--x),var(--y))}
+}
 </style>
 </head>
 <body>
@@ -40,6 +51,23 @@
 </linearGradient></defs>
 <polygon id="left" points="120,264 237,146 325,146 207,264 325,381 237,381"/>
 <image href="wordmark.png" x="329" y="146" width="1067" height="279"/>
+<g class="square-particles" aria-hidden="true">
+  <circle cx="1420" cy="296" r="3.1" fill="#f34561" style="--x:-32px;--y:-165px;--life:2.40s;--delay:-0.00s"/>
+  <circle cx="1443" cy="296" r="4.2" fill="#ff983c" style="--x:-13px;--y:-194px;--life:2.64s;--delay:-1.23s"/>
+  <circle cx="1466" cy="296" r="5" fill="#e7c839" style="--x:6px;--y:-223px;--life:2.88s;--delay:-2.69s"/>
+  <circle cx="1432" cy="296" r="3.6" fill="#51ca76" style="--x:25px;--y:-252px;--life:3.12s;--delay:-1.25s"/>
+  <circle cx="1455" cy="296" r="3.1" fill="#27a8eb" style="--x:-21px;--y:-281px;--life:2.40s;--delay:-2.08s"/>
+  <circle cx="1421" cy="296" r="4.2" fill="#8958ed" style="--x:-2px;--y:-182px;--life:2.64s;--delay:-0.88s"/>
+  <circle cx="1444" cy="296" r="5" fill="#f34561" style="--x:17px;--y:-211px;--life:2.88s;--delay:-2.30s"/>
+  <circle cx="1467" cy="296" r="3.6" fill="#ff983c" style="--x:-29px;--y:-240px;--life:3.12s;--delay:-0.83s"/>
+  <circle cx="1433" cy="296" r="3.1" fill="#e7c839" style="--x:-10px;--y:-269px;--life:2.40s;--delay:-1.76s"/>
+  <circle cx="1456" cy="296" r="4.2" fill="#51ca76" style="--x:9px;--y:-170px;--life:2.64s;--delay:-0.53s"/>
+  <circle cx="1422" cy="296" r="5" fill="#27a8eb" style="--x:28px;--y:-199px;--life:2.88s;--delay:-1.92s"/>
+  <circle cx="1445" cy="296" r="3.6" fill="#8958ed" style="--x:-18px;--y:-228px;--life:3.12s;--delay:-0.42s"/>
+  <circle cx="1468" cy="296" r="3.1" fill="#f34561" style="--x:1px;--y:-257px;--life:2.40s;--delay:-1.44s"/>
+  <circle cx="1434" cy="296" r="4.2" fill="#ff983c" style="--x:20px;--y:-286px;--life:2.64s;--delay:-0.18s"/>
+  <circle cx="1457" cy="296" r="5" fill="#e7c839" style="--x:-26px;--y:-187px;--life:2.88s;--delay:-1.54s"/>
+</g>
 <polygon id="rainbow-dot" fill="url(#rainbow)" points="1416,296 1481,296 1481,328 1481,360 1416,360 1416,328"/>
 </svg>
 <a class="login-cta" href="login.html" aria-label="Login"><svg viewBox="68 -780 2512 1030" aria-hidden="true"><defs><linearGradient id="login-spectrum" x1="0%" y1="50%" x2="100%" y2="50%"><stop offset="0%" stop-color="#c8294b"/><stop offset="20%" stop-color="#b75117"/><stop offset="40%" stop-color="#846a02"/><stop offset="60%" stop-color="#218348"/><stop offset="80%" stop-color="#167bad"/><stop offset="100%" stop-color="#6e41bc"/></linearGradient></defs><path fill="url(#login-spectrum)" d="M68 0H431V-131H205V-739H68ZM763 -567C602 -567 470 -436 470 -277C470 -117 602 13 764 13C925 13 1059 -117 1059 -273C1059 -438 930 -567 763 -567ZM764 -445C853 -445 925 -370 925 -277C925 -184 853 -109 765 -109C675 -109 604 -184 604 -279C604 -370 676 -445 764 -445ZM1564 -554V-484C1522 -540 1463 -567 1383 -567C1226 -567 1110 -445 1110 -281C1110 -110 1224 13 1382 13C1460 13 1512 -12 1564 -73C1559 46 1508 104 1409 104C1347 104 1309 88 1270 45H1119C1164 156 1268 221 1404 221C1504 221 1583 186 1635 120C1674 69 1691 1 1691 -105V-554ZM1398 -445C1493 -445 1558 -377 1558 -275C1558 -175 1496 -109 1400 -109C1305 -109 1244 -174 1244 -275C1244 -377 1305 -445 1398 -445ZM1794 0H1927V-554H1794ZM1794 -614H1927V-739H1794ZM2034 0H2167V-261C2167 -335 2172 -367 2189 -394C2210 -427 2244 -445 2287 -445C2322 -445 2349 -433 2367 -410C2385 -386 2393 -345 2393 -271V0H2526V-297C2526 -396 2516 -444 2486 -487C2450 -539 2390 -567 2313 -567C2249 -567 2206 -549 2157 -501V-554H2034Z"/></svg></a>
