@@ -15,8 +15,8 @@
 @media(prefers-reduced-motion:reduce){.cursor-light{display:none}}
 
 .brand-lockup{position:relative;width:min(100%,628px);margin-inline:auto}
-/* The button shares the wordmark's scale: its lower edge meets the p descender. */
-.login-cta{position:absolute;left:50.7%;bottom:1.07%;width:43.05%;height:19%;display:flex;align-items:center;justify-content:flex-end;padding:1px 0;color:var(--ink);text-decoration:none}
+/* Center Login on the square at x=1448.5 in the logo viewBox. */
+.login-cta{position:absolute;left:97.612%;transform:translateX(-50%);top:calc(76.429% + 2px);width:max(44px,10%);height:19%;display:flex;align-items:center;justify-content:center;padding:1px 0;color:var(--ink);text-decoration:none}
 .login-cta svg{display:block;width:auto;max-width:94%;height:85%}
 .login-cta::after{content:"";position:absolute;left:0;right:0;top:0;min-height:44px;height:100%}
 .login-cta:focus-visible{outline:2px dashed currentColor;outline-offset:3px}
@@ -29,7 +29,7 @@
 <div class="brand-lockup">
 <svg class="logo" viewBox="120 146 1361 280" role="img" aria-label="Logo COMPETE">
 <defs>
-<linearGradient id="rainbow" x1="0%" y1="100%" x2="100%" y2="0%">
+<linearGradient class="animated-spectrum" id="rainbow" x1="0%" y1="100%" x2="100%" y2="0%">
 <stop offset="0%" stop-color="#fc4449"/>
 <stop offset="20%" stop-color="#ff9839"/>
 <stop offset="37%" stop-color="#fce64d"/>
@@ -42,7 +42,7 @@
 <image href="wordmark.png" x="329" y="146" width="1067" height="279"/>
 <polygon id="rainbow-dot" fill="url(#rainbow)" points="1416,296 1481,296 1481,328 1481,360 1416,360 1416,328"/>
 </svg>
-<a class="login-cta" href="login.html" aria-label="Login"><svg viewBox="0 -780 2580 1030" aria-hidden="true"><path fill="currentColor" d="M68 0H431V-131H205V-739H68ZM763 -567C602 -567 470 -436 470 -277C470 -117 602 13 764 13C925 13 1059 -117 1059 -273C1059 -438 930 -567 763 -567ZM764 -445C853 -445 925 -370 925 -277C925 -184 853 -109 765 -109C675 -109 604 -184 604 -279C604 -370 676 -445 764 -445ZM1564 -554V-484C1522 -540 1463 -567 1383 -567C1226 -567 1110 -445 1110 -281C1110 -110 1224 13 1382 13C1460 13 1512 -12 1564 -73C1559 46 1508 104 1409 104C1347 104 1309 88 1270 45H1119C1164 156 1268 221 1404 221C1504 221 1583 186 1635 120C1674 69 1691 1 1691 -105V-554ZM1398 -445C1493 -445 1558 -377 1558 -275C1558 -175 1496 -109 1400 -109C1305 -109 1244 -174 1244 -275C1244 -377 1305 -445 1398 -445ZM1794 0H1927V-554H1794ZM1794 -614H1927V-739H1794ZM2034 0H2167V-261C2167 -335 2172 -367 2189 -394C2210 -427 2244 -445 2287 -445C2322 -445 2349 -433 2367 -410C2385 -386 2393 -345 2393 -271V0H2526V-297C2526 -396 2516 -444 2486 -487C2450 -539 2390 -567 2313 -567C2249 -567 2206 -549 2157 -501V-554H2034Z"/></svg></a>
+<a class="login-cta" href="login.html" aria-label="Login"><svg viewBox="0 -780 2580 1030" aria-hidden="true"><defs><linearGradient id="login-spectrum" x1="0%" y1="50%" x2="100%" y2="50%"><stop offset="0%" stop-color="#c8294b"/><stop offset="20%" stop-color="#b75117"/><stop offset="40%" stop-color="#846a02"/><stop offset="60%" stop-color="#218348"/><stop offset="80%" stop-color="#167bad"/><stop offset="100%" stop-color="#6e41bc"/></linearGradient></defs><path fill="url(#login-spectrum)" d="M68 0H431V-131H205V-739H68ZM763 -567C602 -567 470 -436 470 -277C470 -117 602 13 764 13C925 13 1059 -117 1059 -273C1059 -438 930 -567 763 -567ZM764 -445C853 -445 925 -370 925 -277C925 -184 853 -109 765 -109C675 -109 604 -184 604 -279C604 -370 676 -445 764 -445ZM1564 -554V-484C1522 -540 1463 -567 1383 -567C1226 -567 1110 -445 1110 -281C1110 -110 1224 13 1382 13C1460 13 1512 -12 1564 -73C1559 46 1508 104 1409 104C1347 104 1309 88 1270 45H1119C1164 156 1268 221 1404 221C1504 221 1583 186 1635 120C1674 69 1691 1 1691 -105V-554ZM1398 -445C1493 -445 1558 -377 1558 -275C1558 -175 1496 -109 1400 -109C1305 -109 1244 -174 1244 -275C1244 -377 1305 -445 1398 -445ZM1794 0H1927V-554H1794ZM1794 -614H1927V-739H1794ZM2034 0H2167V-261C2167 -335 2172 -367 2189 -394C2210 -427 2244 -445 2287 -445C2322 -445 2349 -433 2367 -410C2385 -386 2393 -345 2393 -271V0H2526V-297C2526 -396 2516 -444 2486 -487C2450 -539 2390 -567 2313 -567C2249 -567 2206 -549 2157 -501V-554H2034Z"/></svg></a>
 </div>
 <p class="scroll-hint" lang="en">
 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15m-6-6 6 6 6-6"/></svg>
