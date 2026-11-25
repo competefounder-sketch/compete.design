@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#e9ebe3">
+<meta name="description" content="COMPETE">
+<title>COMPETE</title>
+<style>
+:root{color-scheme:light;--paper:#e9ebe3;--ink:#161815;--line:#16181533;--frame-inset:15px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased}
+.shell{position:relative}
+.landing{position:relative;display:grid;align-content:center;width:min(calc(100% - 3rem),1100px);min-height:100svh;margin:auto;padding:24px 0 76px}
+.stage{display:grid;place-items:center;min-height:clamp(104px,23vw,215px)}
+.glow{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+.background{position:fixed;inset:0;pointer-events:none}
+.background::before,.background::after{content:"";position:absolute;inset:0;pointer-events:none}
+.background::before{background:linear-gradient(90deg,#16181512 1px,transparent 1px) center/42px 42px,linear-gradient(#16181512 1px,transparent 1px) center/42px 42px;mask-image:linear-gradient(180deg,#000,transparent 38%,transparent 62%,#000)}
+.background::after{inset:var(--frame-inset);border:1px solid var(--line)}
+.cross{position:absolute;width:13px;height:13px;background:linear-gradient(currentColor,currentColor) center/13px 1px no-repeat,linear-gradient(currentColor,currentColor) center/1px 13px no-repeat}
+.tl{top:calc(var(--frame-inset) - 6px);left:calc(var(--frame-inset) - 6px)}.tr{top:calc(var(--frame-inset) - 6px);right:calc(var(--frame-inset) - 6px)}.bl{bottom:calc(var(--frame-inset) - 6px);left:calc(var(--frame-inset) - 6px)}.br{bottom:calc(var(--frame-inset) - 6px);right:calc(var(--frame-inset) - 6px)}
+.replay{display:block;width:min(100%,900px);appearance:none;background:none;border:0;padding:0;color:inherit;cursor:pointer;touch-action:manipulation}
+.replay:disabled{cursor:default}
+.logo{display:block;width:100%;overflow:visible;fill:currentColor;pointer-events:none}
+.login{width:min(100%,280px);margin:0 auto}
+.login[inert]{pointer-events:none}
+.email-field:focus-within{border-color:var(--ink)}
+.login input{min-height:48px;border:0;background:none;color:var(--ink);font:inherit}
+.email-field{display:flex;align-items:center;gap:9px;min-width:0;border-bottom:1px solid #16181566;transition:border-color 180ms ease}
+.email-hint{margin:7px 0 0;color:#575b51;text-align:center;font-size:.8rem}
+.email-field svg{width:18px;height:18px;flex:none;fill:none;stroke:#575b51;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+.login input{flex:1;min-width:0;padding:0 2px;outline:0}
+button:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+.scroll-hint{position:fixed;z-index:2;pointer-events:none;left:50%;bottom:max(24px,calc(env(safe-area-inset-bottom) + 12px));translate:-50% 0;display:flex;align-items:center;gap:8px;margin:0;color:var(--ink);font-size:.875rem;font-weight:600;white-space:nowrap}
+.scroll-hint svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.story{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;align-content:center;column-gap:clamp(8px,3vw,42px);min-height:100svh;padding:34px clamp(22px,7vw,110px);overflow:hidden;perspective:1000px}
+.story-half{display:grid;justify-items:center;align-content:start;gap:clamp(14px,3svh,36px);min-width:0;perspective:740px}
+.story-half--rainbow{position:relative;isolation:isolate}
+.story-halo{position:absolute;z-index:-1;left:calc(50% + min(24%,62px));top:50%;width:clamp(190px,47vw,580px);height:auto;overflow:visible;transform:translate(-72%,-50%);pointer-events:none;opacity:.84}
+.story-mark{display:block;width:min(84%,220px);height:clamp(90px,40svh,420px);overflow:visible;fill:var(--ink);transform-origin:center}
+.story-copy{width:clamp(135px,34vw,520px);margin:0;color:var(--ink)}
+.story-copy svg{display:block;width:100%;height:auto}
+.interlock{display:grid;justify-items:center;align-content:center;min-height:100svh;padding:26px 24px 72px}
+.interlock-mark{display:block;width:min(100%,680px,106svh);height:auto;overflow:visible;color:var(--ink)}
+.interlock-copy{fill:currentColor;font-size:24px;font-weight:700;letter-spacing:-.45px;text-anchor:middle;pointer-events:none}
+@media(prefers-reduced-motion:no-preference){
+  .story-halo{transition:opacity 520ms ease-out}
+  #halo-particles circle{animation:particle-drift var(--life) linear var(--phase) infinite}
+  .story[data-waiting] #halo-particles circle{animation-play-state:paused}
+  .story[data-waiting] .story-halo{opacity:0}
+  .story[data-waiting] .story-mark,.story[data-waiting] .story-copy{opacity:0}
+  .animated-spectrum stop{animation:rainbow-flow 4.9s linear infinite}
+  .animated-spectrum stop:nth-child(2){animation-delay:-.7s}
+  .animated-spectrum stop:nth-child(3){animation-delay:-1.4s}
+  .animated-spectrum stop:nth-child(4){animation-delay:-2.1s}
+  .animated-spectrum stop:nth-child(5){animation-delay:-2.8s}
+  .animated-spectrum stop:nth-child(6){animation-delay:-3.5s}
+  .animated-spectrum stop:nth-child(7){animation-delay:-4.2s}
+}
+@keyframes particle-drift{
+  0%{transform:translate(var(--from-x),var(--from-y));opacity:0}
+  19%{opacity:var(--peak)}
+  65%{opacity:var(--peak)}
+  100%{transform:translate(var(--to-x),var(--to-y));opacity:0}
+}
+@keyframes rainbow-flow{
+  0%,100%{stop-color:#fc4449}
+  14.2857%{stop-color:#ff9839}
+  28.5714%{stop-color:#fce64d}
+  42.8571%{stop-color:#67dc54}
+  57.1429%{stop-color:#32c7ef}
+  71.4286%{stop-color:#6358fa}
+  85.7143%{stop-color:#b348ee}
+}
+@media(max-width:650px){:root{--frame-inset:12px}}
+@media(pointer:coarse){
+body.editing .landing{position:fixed;z-index:3;top:var(--keyboard-top);left:0;right:0;height:var(--keyboard-height);min-height:0;padding:8px 0;align-content:center}
+body.editing .stage{min-height:0}
+body.editing .scroll-hint,body.editing .story,body.editing .interlock{visibility:hidden}
+body.editing .shell::before{content:"";display:block;height:100svh}
+}
+</style>
+</head>
+<body>
+<div class="background" aria-hidden="true"><i class="cross tl" aria-hidden="true"></i><i class="cross tr" aria-hidden="true"></i><i class="cross bl" aria-hidden="true"></i><i class="cross br" aria-hidden="true"></i></div>
+<canvas class="glow" aria-hidden="true"></canvas>
+<main class="shell" aria-label="COMPETE">
+<div class="landing">
+<div class="stage">
+<button type="button" class="replay" aria-label="Rivedi l’animazione del logo" disabled>
+<svg class="logo" viewBox="0 75 1600 415" role="img" aria-label="Logo COMPETE">
+<defs><clipPath id="reveal"><rect id="window" x="329" y="145" width="1067" height="282"/></clipPath>
+<linearGradient id="rainbow" class="animated-spectrum" x1="0%" y1="100%" x2="100%" y2="0%">
+<stop offset="0%" stop-color="#fc4449"/>
+<stop offset="20%" stop-color="#ff9839"/>
+<stop offset="37%" stop-color="#fce64d"/>
+<stop offset="53%" stop-color="#67dc54"/>
+<stop offset="70%" stop-color="#32c7ef"/>
+<stop offset="84%" stop-color="#6358fa"/>
+<stop offset="100%" stop-color="#b348ee"/>
+</linearGradient></defs>
+<polygon id="left" points="120,264 237,146 325,146 207,264 325,381 237,381"/>
+<image href="wordmark.png" x="329" y="146" width="1067" height="279" clip-path="url(#reveal)"/>
+<polygon id="right" points="1416,296 1481,296 1481,328 1481,360 1416,360 1416,328"/>
+<polygon id="rainbow-dot" fill="url(#rainbow)" points="1416,296 1481,296 1481,328 1481,360 1416,360 1416,328"/>
+</svg>
+</button>
+</div>
+<div class="login" role="group" aria-label="Accesso dimostrativo">
+<label class="email-field">
+<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg>
+<input type="email" aria-label="E-mail" aria-describedby="email-hint" inputmode="email" autocomplete="off" autocapitalize="none" spellcheck="false">
+</label>
+<p id="email-hint" class="email-hint" lang="en">try to type</p>
+</div>
+<p class="scroll-hint" lang="en">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15m-6-6 6 6 6-6"/></svg>
+<span>Scroll down for more</span>
+</p>
+</div>
+<section id="story" class="story" aria-label="You. Better." data-waiting>
+<div class="story-half">
+<svg class="story-mark" viewBox="0 0 205 235" preserveAspectRatio="none" aria-hidden="true"><path d="M0 118 117 0h88L87 118l118 117h-88Z"/></svg>
+</div>
+<h2 class="story-copy" lang="en" aria-label="You. Better.">
+<svg viewBox="-1 -743 5320 760" aria-hidden="true">
+<defs><linearGradient id="better-text-spectrum" x1="0%" y1="50%" x2="100%" y2="50%"><stop offset="0%" stop-color="#c8294b"/><stop offset="20%" stop-color="#b75117"/><stop offset="40%" stop-color="#846a02"/><stop offset="60%" stop-color="#218348"/><stop offset="80%" stop-color="#167bad"/><stop offset="100%" stop-color="#6e41bc"/></linearGradient></defs>
+<path fill="currentColor" d="M246.0 0H383.0V-273L626.0 -739H478.0L314.0 -399L151.0 -739H3.0L246.0 -273ZM879.0 -567C718.0 -567 586.0 -436 586.0 -277C586.0 -117 718.0 13 880.0 13C1041.0 13 1175.0 -117 1175.0 -273C1175.0 -438 1046.0 -567 879.0 -567ZM880.0 -445C969.0 -445 1041.0 -370 1041.0 -277C1041.0 -184 969.0 -109 881.0 -109C791.0 -109 720.0 -184 720.0 -279C720.0 -370 792.0 -445 880.0 -445ZM1743.0 -554H1610.0V-293C1610.0 -219 1605.0 -184 1589.0 -160C1570.0 -127 1533.0 -109 1488.0 -109C1454.0 -109 1428.0 -120 1410.0 -144C1391.0 -168 1383.0 -208 1383.0 -283V-554H1250.0V-257C1250.0 -163 1261.0 -114 1292.0 -69C1329.0 -16 1388.0 13 1461.0 13C1528.0 13 1569.0 -4 1620.0 -53V0H1743.0ZM1874.0 0H2007.0V-128H1874.0Z"/>
+<path fill="url(#better-text-spectrum)" d="M2430.0 0H2627.0C2709.0 0 2769.0 -13 2814.0 -41C2875.0 -78 2910.0 -144 2910.0 -220C2910.0 -267 2897.0 -311 2874.0 -341C2853.0 -369 2832.0 -383 2784.0 -403C2844.0 -434 2866.0 -472 2866.0 -542C2866.0 -611 2836.0 -669 2782.0 -703C2738.0 -731 2692.0 -739 2582.0 -739H2430.0ZM2567.0 -131V-320H2632.0C2727.0 -320 2772.0 -289 2772.0 -224C2772.0 -159 2731.0 -131 2635.0 -131ZM2567.0 -454V-605H2623.0C2695.0 -605 2729.0 -581 2729.0 -530C2729.0 -477 2694.0 -454 2611.0 -454ZM3545.0 -218C3549.0 -238 3550.0 -250 3550.0 -270C3550.0 -441 3429.0 -567 3264.0 -567C3101.0 -567 2972.0 -438 2972.0 -275C2972.0 -113 3103.0 13 3272.0 13C3363.0 13 3434.0 -20 3492.0 -87C3513.0 -113 3527.0 -136 3536.0 -164H3391.0C3357.0 -124 3324.0 -109 3269.0 -109C3190.0 -109 3132.0 -151 3116.0 -218ZM3112.0 -335C3133.0 -407 3187.0 -445 3266.0 -445C3348.0 -445 3402.0 -406 3419.0 -335ZM3653.0 0H3786.0V-433H3866.0V-554H3786.0V-739H3653.0V-554H3588.0V-433H3653.0ZM3966.0 0H4099.0V-433H4179.0V-554H4099.0V-739H3966.0V-554H3901.0V-433H3966.0ZM4784.0 -218C4788.0 -238 4789.0 -250 4789.0 -270C4789.0 -441 4668.0 -567 4503.0 -567C4340.0 -567 4211.0 -438 4211.0 -275C4211.0 -113 4342.0 13 4511.0 13C4602.0 13 4673.0 -20 4731.0 -87C4752.0 -113 4766.0 -136 4775.0 -164H4630.0C4596.0 -124 4563.0 -109 4508.0 -109C4429.0 -109 4371.0 -151 4355.0 -218ZM4351.0 -335C4372.0 -407 4426.0 -445 4505.0 -445C4587.0 -445 4641.0 -406 4658.0 -335ZM4875.0 0H5008.0V-308C5005.0 -390 5047.0 -436 5127.0 -439V-567H5117.0C5060.0 -567 5032.0 -551 4997.0 -500V-554H4875.0ZM5182.0 0H5315.0V-128H5182.0Z"/>
+</svg>
+</h2>
+<div class="story-half story-half--rainbow">
+<svg class="story-halo" viewBox="0 0 240 160" aria-hidden="true">
+<defs class="halo-spectrum"><mask id="halo-particles" maskUnits="userSpaceOnUse" x="0" y="0" width="240" height="160"></mask></defs>
+<rect width="240" height="160" fill="url(#halo-rainbow)" mask="url(#halo-particles)"/>
+</svg>
+<svg class="story-mark" viewBox="0 0 205 235" preserveAspectRatio="none" aria-hidden="true"><defs class="story-spectrum"></defs><path fill="url(#story-rainbow)" d="M0 0h88l117 118-117 117H0l118-117Z"/></svg>
+</div>
+</section>
+<section class="interlock" lang="en" aria-label="Even a casual, can be a winner.">
+<svg class="interlock-mark" viewBox="0 0 570 500" aria-hidden="true">
+<defs class="interlock-spectrum"><linearGradient id="winner-text-spectrum" x1="0%" y1="50%" x2="100%" y2="50%"><stop offset="0%" stop-color="#c8294b"/><stop offset="20%" stop-color="#b75117"/><stop offset="40%" stop-color="#846a02"/><stop offset="60%" stop-color="#218348"/><stop offset="80%" stop-color="#167bad"/><stop offset="100%" stop-color="#6e41bc"/></linearGradient><path id="interlock-chevron" d="M0 117.5 117.5 0h88L88 117.5l117.5 117.5h-88Z"/></defs>
+<g class="interlock-left" transform="translate(105 222) rotate(45) translate(0 -117.5)">
+<use href="#interlock-chevron" fill="currentColor"/>
+</g>
+<g class="interlock-right" transform="translate(465 284.2253967444162) rotate(45) translate(-205.5 -117.5)">
+<use href="#interlock-chevron" transform="translate(205.5 0) scale(-1 1)" fill="url(#interlock-rainbow)"/>
+</g>
+<g class="interlock-copy">
+<text x="185" y="207">Even a casual,</text>
+<text x="373" y="319" fill="url(#winner-text-spectrum)">can be a winner.</text>
+</g>
+</svg>
+</section>
+</main>
+<script>
+const left = document.querySelector('#left');
+const right = document.querySelector('#right');
+const rainbowDot = document.querySelector('#rainbow-dot');
+const clip = document.querySelector('#window');
+const replay = document.querySelector('.replay');
+const motion = matchMedia('(prefers-reduced-motion: reduce)');
+const logo = document.querySelector('.logo');
+const glow = document.querySelector('.glow');
+const login = document.querySelector('.login');
+const email = login.querySelector('input');
+const story = document.querySelector('.story');
+const interlock = document.querySelector('.interlock');
+const interlockLeft = interlock.querySelector('.interlock-left');
+const interlockRight = interlock.querySelector('.interlock-right');
+const interlockCopy = interlock.querySelector('.interlock-copy');
+const sourceGradient = document.querySelector('#rainbow');
+for (const layer of ['story', 'halo', 'interlock']) {
+  const gradient = sourceGradient.cloneNode(true);
+  gradient.id = layer + '-rainbow';
+  document.querySelector('.' + layer + '-spectrum').append(gradient);
+}
+const particleMask = story.querySelector('#halo-particles');
+const particles = document.createDocumentFragment();
+const particleCount = 168;
+for (let index = 0; index < particleCount; index++) {
+  const reach = (index + .6) / particleCount;
+  const variation = (Math.sin(index * 37.17) + 1) / 2;
+  const dx = -(24 + 121 * reach ** .82);
+  const spread = 10 + 41 * reach;
+  const dy = Math.sin(index * 2.399963) * spread * (.52 + .48 * variation) - 7 * reach;
+  const peak = (.50 + .46 * variation) * (1 - .59 * reach);
+  const life = 1.65 + .9 * variation;
+  const phase = life * ((index * .618034) % 1);
+
+  const particle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  particle.setAttribute('cx', 173 + dx);
+  particle.setAttribute('cy', 80 + dy);
+  particle.setAttribute('r', .45 + (1 + .55 * (1 - reach)) * variation);
+  particle.setAttribute('opacity', peak);
+  particle.setAttribute('fill', 'white');
+  particle.style.setProperty('--peak', peak);
+  particle.style.setProperty('--life', life + 's');
+  particle.style.setProperty('--phase', -phase + 's');
+  particle.style.setProperty('--from-x', -dx + 'px');
+  particle.style.setProperty('--from-y', -dy + 'px');
+  particle.style.setProperty('--to-x', dx * .13 + 'px');
+  particle.style.setProperty('--to-y', dy * .13 + 'px');
+  particles.append(particle);
+}
+particleMask.append(particles);
+
+const storyMarks = [...story.querySelectorAll('.story-mark')];
+const storyCopy = [...story.querySelectorAll('.story-copy')];
+const square = [[0,0],[65,0],[65,32],[65,64],[0,64],[0,32]];
+const chevron = [[0,0],[88,0],[205,118],[88,235],[0,235],[118,118]];
+let frame;
+let glowFrame;
+let closure = 0;
+let targetClosure = 0;
+
+const mix = (a, b, value) => a + (b - a) * value;
+const clamp = value => Math.max(0, Math.min(1, value));
+
+// Unit step response of an underdamped spring initially at rest.
+function spring(seconds, decay, frequency) {
+  return 1 - Math.exp(-decay * seconds) *
+    (Math.cos(frequency * seconds) + decay / frequency * Math.sin(frequency * seconds));
+}
+
+// Build momentum slowly, then run through the spring's snap and recoil.
+function snap(seconds) {
+  const rampedTime = seconds * (seconds / .43) ** 1.6;
+  return spring(rampedTime, 8.5, 13);
+}
+
+function draw(leftX, rightX, morph, alpha, scale = 1, clipInset = 0) {
+  left.setAttribute('transform', 'translate(' + leftX + ' 0)');
+  const top = mix(296, 146, morph);
+  const points = square.map(([x, y], index) =>
+    [rightX + mix(x, chevron[index][0], morph), top + mix(y, chevron[index][1], morph)].join(',')
+  ).join(' ');
+  right.setAttribute('points', points);
+  right.setAttribute('opacity', alpha);
+  rainbowDot.setAttribute('points', points);
+  rainbowDot.setAttribute('opacity', alpha);
+  const start = Math.max(329, 325 + leftX + 3);
+  const end = Math.min(1396, rightX - 3);
+  clip.setAttribute('x', start);
+  clip.setAttribute('width', Math.max(0, end - start - clipInset));
+  logo.style.transform = 'scale(' + scale + ')';
+}
+
+function drawHandoff(lift, reveal) {
+  const visible = clamp(reveal);
+  replay.style.transform = 'translateY(' + mix(43, 0, lift) + 'px)';
+  login.style.opacity = visible;
+  login.style.transform = 'translateY(' + mix(16, 0, reveal) + 'px)';
+  login.style.clipPath = visible === 1 ? 'none' : 'inset(0 ' + (1 - visible) * 50 + '%)';
+}
+
+const morphEnd = .4;
+
+function drawClosure(progress, recoil = 0) {
+  closure = clamp(progress);
+  const morph = clamp(closure / morphEnd);
+  const travel = clamp((closure - morphEnd) / (1 - morphEnd));
+  draw(mix(0, 474, travel), mix(1416, 811, travel),
+    morph, 1, .82 - recoil, 6 * travel);
+}
+
+function makeWaveMask() {
+  const size = 96;
+  const mask = document.createElement('canvas');
+  mask.width = mask.height = size;
+  const context = mask.getContext('2d');
+  const image = context.createImageData(size, size);
+  const center = (size - 1) / 2;
+  for (let row = 0; row < size; row++) {
+    for (let col = 0; col < size; col++) {
+      const distance = Math.max(Math.abs(row - center), Math.abs(col - center)) / center;
+      const light = distance < .6 ? mix(.15, 1, distance / .6) : (1 - (distance - .6) / .4) ** 1.4;
+      image.data[(row * size + col) * 4 + 3] = Math.round(light * 255);
+    }
+  }
+  context.putImageData(image, 0, 0);
+  return mask;
+}
+
+function makeDotTexture(width, height) {
+  const tile = document.createElement('canvas');
+  tile.width = tile.height = 8;
+  const dot = tile.getContext('2d');
+  dot.beginPath();
+  dot.arc(4, 4, 1.05, 0, 2 * Math.PI);
+  dot.fill();
+
+  const texture = document.createElement('canvas');
+  texture.width = width;
+  texture.height = height;
+  const context = texture.getContext('2d');
+  context.fillStyle = context.createPattern(tile, 'repeat');
+  context.fillRect(0, 0, width, height);
+
+  context.globalCompositeOperation = 'source-in';
+  const colors = ['#f34561', '#ff973c', '#e7c839', '#51ca76', '#27a8eb', '#8958ed'];
+  const gradient = context.createLinearGradient(0, height * .15, width, height * .8);
+  colors.forEach((color, index) => gradient.addColorStop(index / (colors.length - 1), color));
+  context.fillStyle = gradient;
+  context.fillRect(0, 0, width, height);
+  return texture;
+}
+
+let waveMask;
+let dotTexture;
+function prepareGlow() {
+  const { width, height } = glow.getBoundingClientRect();
+  const pixelWidth = Math.max(1, Math.round(width));
+  const pixelHeight = Math.max(1, Math.round(height));
+  waveMask ??= makeWaveMask();
+  if (dotTexture?.width !== pixelWidth || dotTexture.height !== pixelHeight) {
+    dotTexture = makeDotTexture(pixelWidth, pixelHeight);
+    glow.width = pixelWidth;
+    glow.height = pixelHeight;
+  }
+}
+
+function releaseGlow() {
+  const ctx = glow.getContext('2d');
+  if (!ctx) return;
+
+  cancelAnimationFrame(glowFrame);
+  prepareGlow();
+  const { width, height } = glow;
+  const mark = logo.getBoundingClientRect();
+  const x = mark.left + mark.width * (805 / 1600);
+  const y = mark.top + mark.height * (189 / 415);
+  const extent = Math.max(x, width - x, y, height - y);
+  const start = performance.now();
+
+  function paint(now) {
+    ctx.clearRect(0, 0, width, height);
+    const elapsed = (now - start) / 1000;
+    if (elapsed >= 1.45 || motion.matches) return;
+
+    const spread = 1 - (1 - clamp(elapsed / 1.24)) ** 1.6;
+    const radius = mix(18, extent * 1.7, spread);
+    ctx.globalAlpha = .84 * clamp(elapsed / .07) * (1 - clamp((elapsed - .48) / .97)) ** 1.2;
+    ctx.drawImage(dotTexture, 0, 0);
+
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'destination-in';
+    ctx.drawImage(waveMask, x - radius, y - radius, 2 * radius, 2 * radius);
+    ctx.globalCompositeOperation = 'source-over';
+    glowFrame = requestAnimationFrame(paint);
+  }
+  glowFrame = requestAnimationFrame(paint);
+}
+
+function syncClosure() {
+  const target = email.value.length > 0 ? 1 : 0;
+  if (login.inert || target === targetClosure) return;
+
+  targetClosure = target;
+  cancelAnimationFrame(frame);
+  if (motion.matches) {
+    drawClosure(target);
+    return;
+  }
+
+  const from = closure;
+  const morphing = target === 1 && from < morphEnd;
+  const morphDuration = .23;
+  const pause = .12;
+  const travelStart = morphing ? morphDuration + pause : 0;
+  const travelFrom = morphing ? morphEnd : from;
+  let reached = false;
+  const start = performance.now();
+  function advance(now) {
+    const seconds = (now - start) / 1000;
+    if (seconds < travelStart) {
+      const time = clamp(seconds / morphDuration);
+      const ease = time * time * (3 - 2 * time);
+      drawClosure(mix(from, morphEnd, ease));
+      frame = requestAnimationFrame(advance);
+      return;
+    }
+
+    const travelTime = seconds - travelStart;
+    if (travelTime >= .64) {
+      drawClosure(target);
+      if (!reached && target === 1) releaseGlow();
+      return;
+    }
+
+    const travel = snap(travelTime);
+    const recoil = Math.max(0, travel - 1) * .28;
+    const impact = !reached && travel >= 1;
+    reached ||= impact;
+    drawClosure(reached ? target : mix(travelFrom, target, travel), recoil);
+    if (impact && target === 1) releaseGlow();
+    frame = requestAnimationFrame(advance);
+  }
+  frame = requestAnimationFrame(advance);
+}
+
+function play() {
+  cancelAnimationFrame(frame);
+  if (motion.matches) {
+    targetClosure = email.value.length > 0 ? 1 : 0;
+    drawClosure(targetClosure);
+    drawHandoff(1, 1);
+    login.inert = false;
+    replay.disabled = true;
+    return;
+  }
+
+  replay.disabled = false;
+  login.inert = true;
+  drawHandoff(0, 0);
+  draw(576, 803, 0, 0);
+  const start = performance.now();
+
+  function advance(now) {
+    const seconds = (now - start) / 1000;
+    if (seconds < .14) {
+      draw(576, 803, 0, 0);
+    } else if (seconds < .94) {
+      const time = seconds - .14;
+      const travel = snap(time * .82);
+      draw(mix(576, 0, travel), mix(803, 1416, travel), 0, clamp(travel * 2));
+    } else if (seconds < 1.86) {
+      const time = Math.max(0, seconds - 1.06);
+      const lift = spring(time, 8.8, 13);
+      const reveal = spring(Math.max(0, time - .08), 9, 12);
+      draw(0, 1416, 0, 1, mix(1, .82, lift));
+      drawHandoff(lift, reveal);
+    } else {
+      targetClosure = 0;
+      drawClosure(0);
+      drawHandoff(1, 1);
+      login.inert = false;
+      prepareGlow();
+      syncClosure();
+      return;
+    }
+    frame = requestAnimationFrame(advance);
+  }
+  frame = requestAnimationFrame(advance);
+}
+
+let storyAnimations = [];
+let storyEntered = false;
+
+function animateStory() {
+  story.removeAttribute('data-waiting');
+  if (motion.matches) return;
+
+  storyAnimations = storyMarks.map((mark, index) => {
+    const side = index === 0 ? -1 : 1;
+    return mark.animate([
+      {transform: 'translate3d(' + side * 30 + 'vw,0,-210px) rotateY(' + side * 180 + 'deg)', opacity: 0},
+      {opacity: 1, offset: .34},
+      {transform: 'translate3d(0,0,0) rotateY(0deg)', opacity: 1}
+    ], {duration: 980, delay: 110, easing: 'cubic-bezier(.16,1,.30,1)', fill: 'backwards'});
+  });
+  storyAnimations.push(...storyCopy.map(copy => copy.animate([
+    {opacity: 0, transform: 'translateY(12px)'},
+    {opacity: 1, transform: 'translateY(0)'}
+  ], {duration: 460, delay: 455, easing: 'ease-out', fill: 'backwards'})));
+}
+
+const storyObserver = new IntersectionObserver(([entry]) => {
+  if (entry.intersectionRatio >= .36 && !storyEntered) {
+    storyEntered = true;
+    animateStory();
+  } else if (entry.intersectionRatio <= .12 && storyEntered) {
+    storyEntered = false;
+    story.setAttribute('data-waiting', '');
+    storyAnimations.forEach(animation => animation.cancel());
+    storyAnimations = [];
+  }
+}, {threshold: [.12, .36]});
+
+storyObserver.observe(story);
+
+function drawInterlock(progress) {
+  const leftX = mix(62, 105, progress);
+  const leftY = mix(250, 222, progress);
+  const rightX = mix(508, 465, progress);
+  // At 45°, the two horizontal arms share the same top and bottom edges.
+  const rightY = mix(250, 222 + 88 / Math.SQRT2, progress);
+  const angle = 45 * progress;
+  interlockCopy.setAttribute('opacity', clamp((progress - .94) / .06));
+  interlockLeft.setAttribute('transform', 'translate(' + leftX + ' ' + leftY + ') rotate(' + angle + ') translate(0 -117.5)');
+  interlockRight.setAttribute('transform', 'translate(' + rightX + ' ' + rightY + ') rotate(' + angle + ') translate(-205.5 -117.5)');
+}
+
+let interlockFrame;
+let interlockEntered = false;
+if (!motion.matches) drawInterlock(0);
+const interlockObserver = new IntersectionObserver(([entry]) => {
+  if (entry.intersectionRatio >= .36 && !interlockEntered) {
+    interlockEntered = true;
+    if (motion.matches) {
+      drawInterlock(1);
+      return;
+    }
+    const start = performance.now();
+    function turn(now) {
+      if (motion.matches) {
+        drawInterlock(1);
+        return;
+      }
+      const time = clamp((now - start) / 850);
+      drawInterlock(1 - (1 - time) ** 3.4);
+      if (time < 1) interlockFrame = requestAnimationFrame(turn);
+    }
+    interlockFrame = requestAnimationFrame(turn);
+  } else if (entry.intersectionRatio <= .12 && interlockEntered) {
+    interlockEntered = false;
+    cancelAnimationFrame(interlockFrame);
+    drawInterlock(motion.matches ? 1 : 0);
+  }
+}, {threshold: [.12, .36]});
+interlockObserver.observe(interlock);
+
+const viewport = window.visualViewport;
+function fitKeyboard() {
+  if (document.activeElement !== email) return;
+  document.body.style.setProperty('--keyboard-height', (viewport?.height ?? innerHeight) + 'px');
+  document.body.style.setProperty('--keyboard-top', (viewport?.offsetTop ?? 0) + 'px');
+  document.body.classList.add('editing');
+}
+email.addEventListener('focus', fitKeyboard);
+viewport?.addEventListener('resize', fitKeyboard);
+viewport?.addEventListener('scroll', fitKeyboard);
+email.addEventListener('blur', () => document.body.classList.remove('editing'));
+email.addEventListener('input', syncClosure);
+replay.addEventListener('click', play);
+motion.addEventListener('change', play);
+play();
+</script>
+</body>
+</html>
