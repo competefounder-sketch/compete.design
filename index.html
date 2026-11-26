@@ -108,10 +108,18 @@
 
 @media(prefers-reduced-motion:no-preference){
   .ahead-scene{overflow:clip}
-  .ahead-scene[data-ready] .ahead-marks{opacity:0}
-  .ahead-scene[data-ready].revealed .ahead-marks{animation:ahead-dash .85s both}
-  .ahead-scene[data-ready].revealed h2 span{transition-delay:.57s}
-  .ahead-scene[data-ready].revealed h2 .ahead-word{transition-delay:.91s}
+  .ahead-marks{overflow:visible}
+  .ahead-scene[data-ready] .ahead-marks use{opacity:0;transform-box:fill-box;transform-origin:center}
+  .ahead-scene.revealed .ahead-marks use:first-of-type{animation:ahead-turn .72s cubic-bezier(.18,.75,.24,1) both}
+  .ahead-scene.revealed .ahead-marks use:last-of-type{animation:ahead-dash .85s .74s both}
+  .ahead-scene[data-ready].revealed h2 span{transition-delay:1.31s}
+  .ahead-scene[data-ready].revealed h2 .ahead-word{transition-delay:1.65s}
+}
+@keyframes ahead-turn{
+  0%{opacity:0;transform:translateX(-72vw) rotate(-140deg)}
+  16%{opacity:1}
+  84%{transform:translateX(3px) rotate(4deg)}
+  100%{opacity:1;transform:none}
 }
 @keyframes ahead-dash{
   0%{opacity:0;transform:translateX(-75vw) scaleX(1.26) skewX(-12deg);filter:blur(4px)}
