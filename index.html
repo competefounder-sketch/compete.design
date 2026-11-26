@@ -120,6 +120,28 @@
   78%{transform:translateX(6px) scaleX(.98);filter:drop-shadow(-2px 0 1px transparent);animation-timing-function:ease-in-out}
   100%{opacity:1;transform:translateX(0) scaleX(1);filter:none}
 }
+
+.together-scene{min-height:100svh;display:grid;align-content:center;justify-items:center;gap:clamp(20px,4vw,40px);padding:48px 16px;overflow:clip;text-align:center}
+.together-marks{width:min(56vw,360px);height:auto;overflow:visible;fill:var(--ink)}
+.together-scene h2{margin:0;font-size:clamp(30px,7vw,72px);line-height:1.15;letter-spacing:-.045em}
+@media (prefers-reduced-motion:no-preference){
+  .together-scene[data-ready] .invite-left{transform:translateX(108px)}
+  .together-scene[data-ready] .invite-right,.together-scene[data-ready] h2{opacity:0}
+  .together-scene.revealed .invite-left{animation:invite-space 2.15s both}
+  .together-scene.revealed .invite-right{animation:invite-arrive 1.6s .55s both}
+  .together-scene.revealed h2{animation:invite-caption .48s 2.05s both}
+}
+@keyframes invite-space{
+  0%,10%{transform:translateX(108px)}
+  40%,72%{transform:translateX(-42px)}
+  100%{transform:translateX(0)}
+}
+@keyframes invite-arrive{
+  0%{opacity:0;transform:translateX(64vw)}
+  43%,62%{opacity:1;transform:translateX(42px)}
+  100%{opacity:1;transform:translateX(0)}
+}
+@keyframes invite-caption{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
@@ -224,6 +246,13 @@
 </linearGradient><path id="ahead-chevron" d="M0 0h88l117 118-117 117H0l118-117Z"/></defs><use href="#ahead-chevron"/><use href="#ahead-chevron" x="225" fill="url(#ahead-spectrum)"/></svg>
 <h2><span>One step</span> <span class="ahead-word">ahead.</span></h2>
 </section>
+<section id="together" class="together-scene" lang="en" aria-labelledby="together-heading">
+<svg class="together-marks" viewBox="0 0 422 235" aria-hidden="true">
+  <g class="invite-left"><use href="#interlock-chevron"/></g>
+  <g class="invite-right"><use href="#ahead-chevron" x="217" fill="url(#ahead-spectrum)"/></g>
+</svg>
+<h2 id="together-heading">Better together.</h2>
+</section>
 </main>
 <script src="compete.js?v=winner-scene" defer></script>
 <script>
@@ -306,13 +335,16 @@ document.querySelector('.login-cta').addEventListener('click', event => {
 </script>
 <script>
 (() => {
-  const scene = document.querySelector('#ahead');
-  const observer = new IntersectionObserver(([entry]) => {
-    if (entry.intersectionRatio >= .3) scene.classList.add('revealed');
-    else if (!entry.isIntersecting) scene.classList.remove('revealed');
+  const observer = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      if (entry.intersectionRatio >= .3) entry.target.classList.add('revealed');
+      else if (!entry.isIntersecting) entry.target.classList.remove('revealed');
+    }
   }, {threshold:[0,.3]});
-  scene.dataset.ready = '';
-  observer.observe(scene);
+  for (const scene of document.querySelectorAll('#ahead, #together')) {
+    scene.dataset.ready = '';
+    observer.observe(scene);
+  }
 })();
 </script>
 </body>
