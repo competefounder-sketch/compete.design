@@ -277,15 +277,6 @@
 <section id="house" class="house-scene" aria-label="Free. now and forever." lang="en">
 <svg class="house-marks" viewBox="-18 86 380 230" aria-hidden="true">
   <defs>
-    <linearGradient id="free-split" gradientUnits="userSpaceOnUse" x1="109" x2="213" y1="218" y2="218">
-<stop offset="0" stop-color="var(--ink)"/><stop offset=".5" stop-color="var(--ink)"/>
-<stop offset="50%" stop-color="#c8294b"><animate attributeName="stop-color" values="#c8294b;#b75117;#846a02;#218348;#167bad;#6e41bc;#c8294b" dur="6s" repeatCount="indefinite"/></stop>
-<stop offset="60%" stop-color="#b75117"><animate attributeName="stop-color" values="#b75117;#846a02;#218348;#167bad;#6e41bc;#c8294b;#b75117" dur="6s" repeatCount="indefinite"/></stop>
-<stop offset="70%" stop-color="#846a02"><animate attributeName="stop-color" values="#846a02;#218348;#167bad;#6e41bc;#c8294b;#b75117;#846a02" dur="6s" repeatCount="indefinite"/></stop>
-<stop offset="80%" stop-color="#218348"><animate attributeName="stop-color" values="#218348;#167bad;#6e41bc;#c8294b;#b75117;#846a02;#218348" dur="6s" repeatCount="indefinite"/></stop>
-<stop offset="90%" stop-color="#167bad"><animate attributeName="stop-color" values="#167bad;#6e41bc;#c8294b;#b75117;#846a02;#218348;#167bad" dur="6s" repeatCount="indefinite"/></stop>
-<stop offset="100%" stop-color="#6e41bc"><animate attributeName="stop-color" values="#6e41bc;#c8294b;#b75117;#846a02;#218348;#167bad;#6e41bc" dur="6s" repeatCount="indefinite"/></stop>
-</linearGradient>
     <linearGradient id="forever-spectrum" href="#better-text-spectrum" gradientUnits="userSpaceOnUse" x1="164" x2="240" y1="255" y2="255" spreadMethod="reflect">
       <animateTransform attributeName="gradientTransform" type="translate" values="0 0;-152 0" dur="6s" repeatCount="indefinite"/>
     </linearGradient>
@@ -296,7 +287,7 @@
     <g clip-path="url(#house-left-half)"><g class="house-left"><use href="#interlock-chevron"/></g></g>
     <g clip-path="url(#house-right-half)"><g transform="translate(131 0)"><g class="house-right"><use href="#ahead-chevron" fill="url(#ahead-spectrum)"/></g></g></g>
   </g>
-  <g class="house-copy"><text x="168" y="237" style="font-size:54px"><tspan fill="url(#free-split)">Free</tspan>.</text><text x="168" y="237"><tspan x="168" dy="28" font-size="22">now and <tspan fill="url(#forever-spectrum)">forever</tspan>.</tspan></text></g>
+  <text class="house-copy" x="168" y="237"><tspan x="168" font-size="54">Free.</tspan><tspan x="168" dy="28" font-size="22">now and <tspan fill="url(#forever-spectrum)">forever</tspan>.</tspan></text>
 </svg>
 </section>
 </main>
