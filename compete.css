@@ -77,3 +77,22 @@ body.editing .shell::before{content:"";display:block;height:100svh}
 .page-link:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 .home-hero .stage{min-height:0}
 .tagline{margin:0;text-align:center;font-size:clamp(1rem,3vw,1.625rem);font-weight:600;letter-spacing:-.025em;line-height:1.25}
+
+/* Share a continuous color cycle without replacing element motion or opacity. */
+@property --compete-hue {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
+@keyframes compete-color-cycle {
+  from { --compete-hue: 0deg }
+  to { --compete-hue: 360deg }
+}
+@media (prefers-reduced-motion:no-preference) {
+  :root { animation:compete-color-cycle 6s linear infinite }
+  .feature-gem::before,.ahead-word,.story-details ul:last-child li,
+  .login-cta svg,.story-copy h2 path[fill="url(#better-text-spectrum)"],
+  .interlock-copy path[fill="url(#winner-text-spectrum)"],
+  .story-sparks,.square-particles,.cursor-light,.winner-letter-sparks,
+  .winner-piece-sparks,.glow { filter:hue-rotate(var(--compete-hue)) }
+}
