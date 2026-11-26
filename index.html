@@ -142,6 +142,21 @@
   100%{opacity:1;transform:translateX(0)}
 }
 @keyframes invite-caption{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+.house-scene{min-height:100svh;display:grid;place-items:center;overflow:clip}
+.house-marks{width:min(72vw,460px);height:auto;overflow:visible;fill:var(--ink)}
+.house-left{transform-origin:0px 117.5px;transform:rotate(45deg)}
+.house-right{transform-origin:205px 118px;transform:rotate(-45deg)}
+@media(prefers-reduced-motion:no-preference){
+  .house-scene[data-ready] .house-pair{transform:translateY(-70px)}
+  .house-scene[data-ready] .house-left,.house-scene[data-ready] .house-right{transform:rotate(0deg)}
+  .house-scene.revealed .house-left{animation:house-left .65s cubic-bezier(.35,0,.2,1) both}
+  .house-scene.revealed .house-right{animation:house-right .65s cubic-bezier(.35,0,.2,1) both}
+  .house-scene.revealed .house-pair{animation:house-drop .65s .48s cubic-bezier(.35,0,.2,1) both}
+}
+@keyframes house-left{from{transform:rotate(0deg)}to{transform:rotate(45deg)}}
+@keyframes house-right{from{transform:rotate(0deg)}to{transform:rotate(-45deg)}}
+@keyframes house-drop{from{transform:translateY(-70px)}to{transform:translateY(0)}}
 </style>
 </head>
 <body>
@@ -253,6 +268,18 @@
 </svg>
 <h2 id="together-heading">Better together.</h2>
 </section>
+<section id="house" class="house-scene" aria-label="Compete house" lang="en">
+<svg class="house-marks" viewBox="-18 86 380 230" aria-hidden="true">
+  <defs>
+    <clipPath id="house-left-half"><rect x="-120" y="-180" width="285" height="620"/></clipPath>
+    <clipPath id="house-right-half"><rect x="170" y="-180" width="290" height="620"/></clipPath>
+  </defs>
+  <g class="house-pair">
+    <g clip-path="url(#house-left-half)"><g class="house-left"><use href="#interlock-chevron"/></g></g>
+    <g clip-path="url(#house-right-half)"><g transform="translate(131 0)"><g class="house-right"><use href="#ahead-chevron" fill="url(#ahead-spectrum)"/></g></g></g>
+  </g>
+</svg>
+</section>
 </main>
 <script src="compete.js?v=winner-scene" defer></script>
 <script>
@@ -341,7 +368,7 @@ document.querySelector('.login-cta').addEventListener('click', event => {
       else if (!entry.isIntersecting) entry.target.classList.remove('revealed');
     }
   }, {threshold:[0,.3]});
-  for (const scene of document.querySelectorAll('#ahead, #together')) {
+  for (const scene of document.querySelectorAll('#ahead, #together, #house')) {
     scene.dataset.ready = '';
     observer.observe(scene);
   }
