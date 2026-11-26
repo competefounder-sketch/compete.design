@@ -89,6 +89,22 @@
 .ahead-scene[data-ready].revealed h2 span{opacity:1;transform:none}
 .ahead-scene[data-ready].revealed h2 .ahead-word{transition-delay:.5s}
 }
+.feature-scene ul{display:flex;align-items:flex-end;justify-content:center;width:min(100%,620px);gap:clamp(10px,4vw,48px);margin-bottom:18px}
+.feature-scene li{flex:1;min-width:0;display:grid;justify-items:center;gap:12px;font-size:clamp(16px,4.3vw,28px)}
+.feature-gem{width:clamp(62px,18vw,106px);aspect-ratio:1;display:grid;place-items:center;position:relative}
+.feature-gem::before{content:"";position:absolute;inset:15%;transform:rotate(45deg);background:linear-gradient(135deg,#ffb751,#e6da76,#61dcbb,#8795fa)}
+.feature-scene li:nth-child(2) .feature-gem::before{background:linear-gradient(135deg,#e49cf8,#8897ff,#76dced,#8ee38d)}
+.feature-scene li:nth-child(3) .feature-gem::before{background:linear-gradient(135deg,#86dcff,#c0a3ff,#f99cbd,#ffcf73)}
+.feature-gem svg{position:relative;width:47%;height:47%;fill:none;stroke:var(--ink);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.feature-context{position:absolute;clip-path:inset(50%);width:1px;height:1px;overflow:hidden}
+@media(prefers-reduced-motion:no-preference){
+.feature-scene.is-ready li{transform:translate(var(--from-x,0px),var(--rise)) scale(.45)}
+.feature-scene.is-ready.is-open li{transform:none}
+.feature-scene.is-open .feature-gem{animation:feature-hover 3.6s ease-in-out infinite alternate}
+.feature-scene li:nth-child(2) .feature-gem{animation-delay:-1.3s}
+.feature-scene li:nth-child(3) .feature-gem{animation-delay:-2.4s}
+}
+@keyframes feature-hover{from{transform:translateY(2px) rotate(-2deg)}to{transform:translateY(-4px) rotate(2deg)}}
 </style>
 </head>
 <body>
@@ -179,7 +195,7 @@
 <stop offset="84%" stop-color="#6358fa"/>
 <stop offset="100%" stop-color="#b348ee"/>
 </linearGradient></defs><path fill="url(#feature-spectrum)" d="M0 0h88l117 118-117 117H0l118-117Z"/></svg>
-<ul><li>Discover tournaments</li><li>Explore games</li><li>Invite a friend</li></ul>
+<ul><li><span class="feature-gem" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5v2a4 4 0 0 0 4 4m7-6h3v2a4 4 0 0 1-4 4m-3 1v5m-4 2h8"/></svg></span><span>Discover</span><span class="feature-context"> tournaments</span></li><li><span class="feature-gem" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 7h8c2 0 3 1 4 5l1 4c.4 2-1.2 3-2.8 1.6L15 15H9l-3.2 2.6C4.2 19 2.6 18 3 16l1-4c1-4 2-5 4-5zM6.5 11h4m-2-2v4"/><circle cx="16" cy="10.5" r=".8"/><circle cx="18" cy="12.5" r=".8"/></svg></span><span>Explore</span><span class="feature-context"> games</span></li><li><span class="feature-gem" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 19v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 5"/></svg></span><span>Invite</span><span class="feature-context"> a friend</span></li></ul>
 </section>
 <section id="ahead" class="ahead-scene" lang="en" aria-label="One step ahead.">
 <svg class="ahead-marks" viewBox="0 0 430 235" aria-hidden="true"><defs><linearGradient class="animated-spectrum" id="ahead-spectrum" x1="0%" y1="100%" x2="100%" y2="0%">
@@ -257,6 +273,7 @@ document.querySelector('.login-cta').addEventListener('click', event => {
     const box = mark.getBoundingClientRect();
     const tip = box.top - scene.getBoundingClientRect().top + box.height / 2 + mark.clientWidth * .075;
     items.forEach((item, index) => {
+      item.style.setProperty('--from-x', (scene.clientWidth/2 - item.offsetLeft - item.offsetWidth/2) + 'px');
       item.style.setProperty('--rise', (tip - item.offsetTop - item.offsetHeight / 2) + 'px');
       item.style.setProperty('--delay', (.76 + index * .24) + 's');
     });
