@@ -277,6 +277,9 @@
 <section id="house" class="house-scene" aria-label="Free. now and forever." lang="en">
 <svg class="house-marks" viewBox="-18 86 380 230" aria-hidden="true">
   <defs>
+    <linearGradient id="forever-spectrum" href="#better-text-spectrum" gradientUnits="userSpaceOnUse" x1="164" x2="240" y1="255" y2="255" spreadMethod="reflect">
+      <animateTransform attributeName="gradientTransform" type="translate" values="0 0;-152 0" dur="6s" repeatCount="indefinite"/>
+    </linearGradient>
     <clipPath id="house-left-half"><rect x="-120" y="-180" width="285" height="620"/></clipPath>
     <clipPath id="house-right-half"><rect x="170" y="-180" width="290" height="620"/></clipPath>
   </defs>
@@ -284,7 +287,7 @@
     <g clip-path="url(#house-left-half)"><g class="house-left"><use href="#interlock-chevron"/></g></g>
     <g clip-path="url(#house-right-half)"><g transform="translate(131 0)"><g class="house-right"><use href="#ahead-chevron" fill="url(#ahead-spectrum)"/></g></g></g>
   </g>
-  <text class="house-copy" x="168" y="237"><tspan x="168" font-size="54">Free.</tspan><tspan x="168" dy="28" font-size="22">now and forever.</tspan></text>
+  <text class="house-copy" x="168" y="237"><tspan x="168" font-size="54">Free.</tspan><tspan x="168" dy="28" font-size="22">now and <tspan fill="url(#forever-spectrum)">forever</tspan>.</tspan></text>
 </svg>
 </section>
 </main>
