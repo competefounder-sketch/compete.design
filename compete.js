@@ -115,12 +115,51 @@ if (interlock && !interlock.hidden) {
     interlockRight.setAttribute('transform', 'translate(' + rightX + ' ' + rightY + ') rotate(' + angle + ') translate(-205.5 -117.5)');
   }
 
+  const svg = interlock.querySelector('.interlock-mark');
+  function seedParticles(layer, outline, count, letters) {
+    const length = outline.getTotalLength();
+    const palette = ['#f34561','#ff973c','#dfb92e','#51ca76','#27a8eb','#8958ed'];
+    const samples = [];
+    for (let i=0; i<count; i++) {
+      const at = length*(i+.5)/count;
+      const p = outline.getPointAtLength(at);
+      let angle = i*2.399963;
+      if (letters) {
+        const a = outline.getPointAtLength(at-.03), b = outline.getPointAtLength(at+.03);
+        angle = Math.atan2(b.y-a.y,b.x-a.x)+Math.PI/2;
+        if (outline.isPointInFill(new DOMPoint(p.x+.05*Math.cos(angle),p.y+.05*Math.sin(angle)))) angle += Math.PI;
+      }
+      const dot = document.createElementNS(svg.namespaceURI,'circle');
+      dot.setAttribute('cx',p.x);
+      dot.setAttribute('cy',p.y);
+      dot.setAttribute('fill',palette[i%palette.length]);
+      const life = 2.7+(i%7)*.19;
+      dot.style.setProperty('--life',life+'s');
+      dot.style.setProperty('--phase',-life*((i*.618034)%1)+'s');
+      layer.append(dot);
+      samples.push({dot,angle,reach:letters?2+i%3*.5:6+i*7%10});
+    }
+    function resize() {
+      const unit = svg.viewBox.baseVal.width / (svg.clientWidth || 570);
+      for(const {dot,angle,reach} of samples) {
+        dot.setAttribute('r',(letters ? .65 : 1)*unit);
+        dot.style.setProperty('--dx',Math.cos(angle)*reach*unit+'px');
+        dot.style.setProperty('--dy',Math.sin(angle)*reach*unit+'px');
+      }
+    }
+    new ResizeObserver(resize).observe(svg);
+    resize();
+  }
+  seedParticles(interlock.querySelector('.winner-piece-sparks'),interlock.querySelector('#interlock-chevron'),90,false);
+  seedParticles(interlock.querySelector('.winner-letter-sparks'),interlock.querySelector('#winner-outline'),54,true);
+
   let interlockFrame;
   let interlockEntered = false;
   if (!motion.matches) drawInterlock(0);
   const interlockObserver = new IntersectionObserver(([entry]) => {
     if (entry.intersectionRatio >= .36 && !interlockEntered) {
       interlockEntered = true;
+      interlock.classList.add("is-visible");
       if (motion.matches) {
         drawInterlock(1);
         return;
@@ -138,6 +177,7 @@ if (interlock && !interlock.hidden) {
       interlockFrame = requestAnimationFrame(turn);
     } else if (entry.intersectionRatio <= .12 && interlockEntered) {
       interlockEntered = false;
+      interlock.classList.remove("is-visible");
       cancelAnimationFrame(interlockFrame);
       drawInterlock(motion.matches ? 1 : 0);
     }
