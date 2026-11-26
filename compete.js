@@ -32,9 +32,9 @@ if (story) {
         const probe = new DOMPoint(origin.x+2*Math.cos(angle), origin.y+2*Math.sin(angle));
         if (path.isPointInFill(probe)) angle += Math.PI;
       }
-      const reach = 6 + (i * 7 % 10);
+      const reach = outward ? 2 + (i % 3) * .5 : 6 + (i * 7 % 10);
       const life = 2.7 + (i % 7) * .19;
-      const size = 1.5 + (i % 4) * .38;
+      const size = outward ? 1 + (i % 3) * .25 : 1.5 + (i % 4) * .38;
       Object.assign(spark.style, {width:size+'px',height:size+'px',background:palette[i%palette.length]});
       spark.style.setProperty('--dx',Math.cos(angle)*reach+'px');
       spark.style.setProperty('--dy',Math.sin(angle)*reach+'px');
@@ -58,7 +58,7 @@ if (story) {
     place();
   }
   addSparks(story.querySelector('.story-half--rainbow'),story.querySelector('.story-half--rainbow .story-mark path'),90);
-  addSparks(story.querySelector('h2'),story.querySelector('path[fill="url(#better-text-spectrum)"]'),54,true);
+  addSparks(story.querySelector('h2'),story.querySelector('#better-outer-outline'),54,true);
 
   const storyMarks = [...story.querySelectorAll('.story-mark')];
   const storyCopy = [...story.querySelectorAll('.story-copy h2')];
