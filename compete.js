@@ -5,41 +5,51 @@ const clamp = value => Math.max(0, Math.min(1, value));
 const story = document.querySelector('.story');
 if (story) {
   const sourceGradient = document.querySelector('#rainbow');
-  for (const layer of ['story', 'halo', 'interlock']) {
+  for (const layer of ['story', 'interlock']) {
     const gradient = sourceGradient.cloneNode(true);
     gradient.id = layer + '-rainbow';
     gradient.classList.add('animated-spectrum');
     document.querySelector('.' + layer + '-spectrum').append(gradient);
   }
-  const particleMask = story.querySelector('#halo-particles');
-  const particles = document.createDocumentFragment();
-  const particleCount = 168;
-  for (let index = 0; index < particleCount; index++) {
-    const reach = (index + .6) / particleCount;
-    const variation = (Math.sin(index * 37.17) + 1) / 2;
-    const dx = -(24 + 121 * reach ** .82);
-    const spread = 10 + 41 * reach;
-    const dy = Math.sin(index * 2.399963) * spread * (.52 + .48 * variation) - 7 * reach;
-    const peak = (.50 + .46 * variation) * (1 - .59 * reach);
-    const life = 1.65 + .9 * variation;
-    const phase = life * ((index * .618034) % 1);
-
-    const particle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    particle.setAttribute('cx', 173 + dx);
-    particle.setAttribute('cy', 80 + dy);
-    particle.setAttribute('r', .45 + (1 + .55 * (1 - reach)) * variation);
-    particle.setAttribute('opacity', peak);
-    particle.setAttribute('fill', 'white');
-    particle.style.setProperty('--peak', peak);
-    particle.style.setProperty('--life', life + 's');
-    particle.style.setProperty('--phase', -phase + 's');
-    particle.style.setProperty('--from-x', -dx + 'px');
-    particle.style.setProperty('--from-y', -dy + 'px');
-    particle.style.setProperty('--to-x', dx * .13 + 'px');
-    particle.style.setProperty('--to-y', dy * .13 + 'px');
-    particles.append(particle);
+  function addSparks(host, path, count) {
+    const svg = path.ownerSVGElement;
+    const layer = document.createElement('span');
+    layer.className = 'story-sparks';
+    layer.setAttribute('aria-hidden', 'true');
+    host.append(layer);
+    const palette = ['#f34561','#ff973c','#dfb92e','#51ca76','#27a8eb','#8958ed'];
+    const length = path.getTotalLength();
+    const origins = [];
+    for (let i = 0; i < count; i++) {
+      const spark = document.createElement('i');
+      const angle = i * 2.399963;
+      const reach = 6 + (i * 7 % 10);
+      const life = 2.7 + (i % 7) * .19;
+      const size = 1.5 + (i % 4) * .38;
+      Object.assign(spark.style, {width:size+'px',height:size+'px',background:palette[i%palette.length]});
+      spark.style.setProperty('--dx',Math.cos(angle)*reach+'px');
+      spark.style.setProperty('--dy',Math.sin(angle)*reach+'px');
+      spark.style.setProperty('--life',life+'s');
+      spark.style.setProperty('--phase',-life*((i*.618034)%1)+'s');
+      origins.push(path.getPointAtLength(length*(i+.5)/count));
+      layer.append(spark);
+    }
+    function place() {
+      const view = svg.viewBox.baseVal;
+      // SVGs are centered horizontally in their hosts; the heading SVG fills its host.
+      const w = svg.clientWidth, h = svg.clientHeight;
+      const left = (host.clientWidth-w)/2;
+      origins.forEach((point,i)=>{
+        const spark = layer.children[i];
+        spark.style.left = left+(point.x-view.x)*w/view.width+'px';
+        spark.style.top = (point.y-view.y)*h/view.height+'px';
+      });
+    }
+    new ResizeObserver(place).observe(svg);
+    place();
   }
-  particleMask.append(particles);
+  addSparks(story.querySelector('.story-half--rainbow'),story.querySelector('.story-half--rainbow .story-mark path'),90);
+  addSparks(story.querySelector('h2'),story.querySelector('path[fill="url(#better-text-spectrum)"]'),54);
 
   const storyMarks = [...story.querySelectorAll('.story-mark')];
   const storyCopy = [...story.querySelectorAll('.story-copy h2')];

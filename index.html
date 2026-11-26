@@ -42,7 +42,7 @@
 .story-details{min-width:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;pointer-events:none;opacity:.5;font:300 clamp(11px,2.85vw,16px)/1.4 system-ui,sans-serif}
 .story-details ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px 12px;justify-content:center;align-content:flex-start}
 .story-details ul:first-child{align-content:space-around}
-.story-copy h2 svg{overflow:visible}
+.story-copy h2{position:relative}.story-copy h2 svg{overflow:visible}
 @media(max-width:600px){
   .story-details ul:first-child{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));justify-items:center;align-items:center;align-content:space-around;gap:8px 4px}
   .story-details ul:first-child li:last-child:nth-child(odd){grid-column:1/-1}
@@ -54,6 +54,14 @@
 }
 @keyframes story-word-drift{from{transform:translate(calc(-1 * var(--dx)),calc(-1 * var(--dy)))}to{transform:translate(var(--dx),var(--dy))}}
 @media(max-width:600px){.story{grid-template-columns:minmax(12px,1fr) minmax(0,4.8fr) minmax(12px,1fr)}.story-details li{--dy:3px!important}}
+.story-sparks{position:absolute;inset:0;pointer-events:none;overflow:visible}
+.story-sparks i{position:absolute;border-radius:50%;opacity:0}
+@media(prefers-reduced-motion:no-preference){
+.story-sparks i{animation:short-drift var(--life) linear var(--phase) infinite}
+.story[data-waiting] .story-sparks{visibility:hidden}
+.story[data-waiting] .story-sparks i{animation-play-state:paused}
+}
+@keyframes short-drift{0%{opacity:0;transform:translate(-50%,-50%)}18%{opacity:.76}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy)))}}
 </style>
 </head>
 <body>
@@ -116,10 +124,6 @@
 <div class="story-details"><ul aria-label="You"><li style="--dx:-3px;--dy:4px;--period:3.33s;--delay:-7.2s">ambition</li><li style="--dx:4px;--dy:3px;--period:4.94s;--delay:-6.0s">curiosity</li><li style="--dx:-2px;--dy:6px;--period:3.79s;--delay:-4.8s">talent</li><li style="--dx:3px;--dy:5px;--period:5.40s;--delay:-3.6s">passion</li><li style="--dx:-4px;--dy:4px;--period:4.25s;--delay:-2.4s">reflexes</li><li style="--dx:2px;--dy:3px;--period:3.10s;--delay:-1.2s">patience</li><li style="--dx:-3px;--dy:6px;--period:4.71s;--delay:-0.0s">courage</li><li style="--dx:4px;--dy:5px;--period:3.56s;--delay:-6.6s">creativity</li></ul><ul aria-label="Better"><li style="--dx:3px;--dy:5px;--period:3.56s;--delay:-0.0s">technique</li><li style="--dx:-4px;--dy:4px;--period:5.17s;--delay:-6.6s">awareness</li><li style="--dx:2px;--dy:3px;--period:4.02s;--delay:-5.4s">adaptability</li><li style="--dx:-3px;--dy:6px;--period:5.63s;--delay:-4.2s">control</li><li style="--dx:4px;--dy:5px;--period:4.48s;--delay:-3.0s">accuracy</li><li style="--dx:-2px;--dy:4px;--period:3.33s;--delay:-1.8s">decisions</li><li style="--dx:3px;--dy:3px;--period:4.94s;--delay:-0.6s">tactics</li><li style="--dx:-4px;--dy:6px;--period:3.79s;--delay:-7.2s">execution</li></ul></div>
 </div>
 <div class="story-half story-half--rainbow">
-<svg class="story-halo" viewBox="0 0 240 160" aria-hidden="true">
-<defs class="halo-spectrum"><mask id="halo-particles" maskUnits="userSpaceOnUse" x="0" y="0" width="240" height="160"></mask></defs>
-<rect width="240" height="160" fill="url(#halo-rainbow)" mask="url(#halo-particles)"/>
-</svg>
 <svg class="story-mark" viewBox="0 0 205 235" preserveAspectRatio="none" aria-hidden="true"><defs class="story-spectrum"></defs><path fill="url(#story-rainbow)" d="M0 0h88l117 118-117 117H0l118-117Z"/></svg>
 </div>
 </section>
