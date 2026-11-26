@@ -79,6 +79,16 @@
 .feature-scene.is-ready.is-open .feature-chevron{transform:rotate(90deg)}
 .feature-scene.is-ready.is-open li{opacity:1;transform:none;transition-delay:var(--delay)}
 }
+.ahead-scene{min-height:100svh;display:grid;align-content:center;justify-items:center;gap:clamp(20px,4vw,40px);padding:48px 20px;text-align:center}
+.ahead-marks{display:block;width:min(60vw,380px);height:auto;fill:var(--ink)}
+.ahead-scene h2{margin:0;font-size:clamp(32px,7vw,72px);line-height:1.15;letter-spacing:-.045em}
+.ahead-scene h2 span{display:inline-block}
+.ahead-word{color:#7645ad;background:linear-gradient(100deg,#c8294b,#b75117,#846a02,#218348,#167bad,#6e41bc);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+@media(prefers-reduced-motion:no-preference){
+.ahead-scene[data-ready] h2 span{opacity:0;transform:translateX(-10px);transition:opacity .48s,transform .48s}
+.ahead-scene[data-ready].revealed h2 span{opacity:1;transform:none}
+.ahead-scene[data-ready].revealed h2 .ahead-word{transition-delay:.5s}
+}
 </style>
 </head>
 <body>
@@ -171,6 +181,18 @@
 </linearGradient></defs><path fill="url(#feature-spectrum)" d="M0 0h88l117 118-117 117H0l118-117Z"/></svg>
 <ul><li>Discover tournaments</li><li>Explore games</li><li>Invite a friend</li></ul>
 </section>
+<section id="ahead" class="ahead-scene" lang="en" aria-label="One step Ahead.">
+<svg class="ahead-marks" viewBox="0 0 430 235" aria-hidden="true"><defs><linearGradient class="animated-spectrum" id="ahead-spectrum" x1="0%" y1="100%" x2="100%" y2="0%">
+<stop offset="0%" stop-color="#fc4449"/>
+<stop offset="20%" stop-color="#ff9839"/>
+<stop offset="37%" stop-color="#fce64d"/>
+<stop offset="53%" stop-color="#67dc54"/>
+<stop offset="70%" stop-color="#32c7ef"/>
+<stop offset="84%" stop-color="#6358fa"/>
+<stop offset="100%" stop-color="#b348ee"/>
+</linearGradient><path id="ahead-chevron" d="M0 0h88l117 118-117 117H0l118-117Z"/></defs><use href="#ahead-chevron"/><use href="#ahead-chevron" x="225" fill="url(#ahead-spectrum)"/></svg>
+<h2><span>One step</span> <span class="ahead-word">Ahead.</span></h2>
+</section>
 </main>
 <script src="compete.js?v=winner-scene" defer></script>
 <script>
@@ -247,6 +269,17 @@ document.querySelector('.login-cta').addEventListener('click', event => {
     if (entry.intersectionRatio >= .30) scene.classList.add('is-open');
     else if (!entry.isIntersecting) scene.classList.remove('is-open');
   }, {threshold:[0,.30]});
+  observer.observe(scene);
+})();
+</script>
+<script>
+(() => {
+  const scene = document.querySelector('#ahead');
+  const observer = new IntersectionObserver(([entry]) => {
+    if (entry.intersectionRatio >= .3) scene.classList.add('revealed');
+    else if (!entry.isIntersecting) scene.classList.remove('revealed');
+  }, {threshold:[0,.3]});
+  scene.dataset.ready = '';
   observer.observe(scene);
 })();
 </script>
