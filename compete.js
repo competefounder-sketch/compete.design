@@ -11,7 +11,7 @@ if (story) {
     gradient.classList.add('animated-spectrum');
     document.querySelector('.' + layer + '-spectrum').append(gradient);
   }
-  function addSparks(host, path, count) {
+  function addSparks(host, path, count, outward = false) {
     const svg = path.ownerSVGElement;
     const layer = document.createElement('span');
     layer.className = 'story-sparks';
@@ -22,7 +22,16 @@ if (story) {
     const origins = [];
     for (let i = 0; i < count; i++) {
       const spark = document.createElement('i');
-      const angle = i * 2.399963;
+      const distance = length*(i+.5)/count;
+      const origin = path.getPointAtLength(distance);
+      let angle = i * 2.399963;
+      if (outward) {
+        const before = path.getPointAtLength(distance-1);
+        const after = path.getPointAtLength(distance+1);
+        angle = Math.atan2(after.y-before.y, after.x-before.x) + Math.PI/2;
+        const probe = new DOMPoint(origin.x+2*Math.cos(angle), origin.y+2*Math.sin(angle));
+        if (path.isPointInFill(probe)) angle += Math.PI;
+      }
       const reach = 6 + (i * 7 % 10);
       const life = 2.7 + (i % 7) * .19;
       const size = 1.5 + (i % 4) * .38;
@@ -31,7 +40,7 @@ if (story) {
       spark.style.setProperty('--dy',Math.sin(angle)*reach+'px');
       spark.style.setProperty('--life',life+'s');
       spark.style.setProperty('--phase',-life*((i*.618034)%1)+'s');
-      origins.push(path.getPointAtLength(length*(i+.5)/count));
+      origins.push(origin);
       layer.append(spark);
     }
     function place() {
@@ -49,7 +58,7 @@ if (story) {
     place();
   }
   addSparks(story.querySelector('.story-half--rainbow'),story.querySelector('.story-half--rainbow .story-mark path'),90);
-  addSparks(story.querySelector('h2'),story.querySelector('path[fill="url(#better-text-spectrum)"]'),54);
+  addSparks(story.querySelector('h2'),story.querySelector('path[fill="url(#better-text-spectrum)"]'),54,true);
 
   const storyMarks = [...story.querySelectorAll('.story-mark')];
   const storyCopy = [...story.querySelectorAll('.story-copy h2')];
