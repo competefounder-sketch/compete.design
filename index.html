@@ -157,6 +157,12 @@
 @keyframes house-left{from{transform:rotate(0deg)}to{transform:rotate(45deg)}}
 @keyframes house-right{from{transform:rotate(0deg)}to{transform:rotate(-45deg)}}
 @keyframes house-drop{from{transform:translateY(-70px)}to{transform:translateY(0)}}
+.house-copy{fill:var(--ink);font-family:inherit;font-size:18px;font-weight:700;letter-spacing:-.04em;text-anchor:middle}
+@media(prefers-reduced-motion:no-preference){
+  .house-scene[data-ready] .house-copy{opacity:0}
+  .house-scene.revealed .house-copy{animation:house-copy-in .32s 1.13s both}
+}
+@keyframes house-copy-in{from{opacity:0}to{opacity:1}}
 </style>
 </head>
 <body>
@@ -268,7 +274,7 @@
 </svg>
 <h2 id="together-heading">Better together.</h2>
 </section>
-<section id="house" class="house-scene" aria-label="Compete house" lang="en">
+<section id="house" class="house-scene" aria-label="Free. Now and forever." lang="en">
 <svg class="house-marks" viewBox="-18 86 380 230" aria-hidden="true">
   <defs>
     <clipPath id="house-left-half"><rect x="-120" y="-180" width="285" height="620"/></clipPath>
@@ -278,6 +284,7 @@
     <g clip-path="url(#house-left-half)"><g class="house-left"><use href="#interlock-chevron"/></g></g>
     <g clip-path="url(#house-right-half)"><g transform="translate(131 0)"><g class="house-right"><use href="#ahead-chevron" fill="url(#ahead-spectrum)"/></g></g></g>
   </g>
+  <text class="house-copy" x="168" y="239">Free. Now and forever.</text>
 </svg>
 </section>
 </main>
