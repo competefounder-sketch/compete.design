@@ -105,6 +105,21 @@
 .feature-scene li:nth-child(3) .feature-gem{animation-delay:-2.4s}
 }
 @keyframes feature-hover{from{transform:translateY(2px) rotate(-2deg)}to{transform:translateY(-4px) rotate(2deg)}}
+
+@media(prefers-reduced-motion:no-preference){
+  .ahead-scene{overflow:clip}
+  .ahead-scene[data-ready] .ahead-marks{opacity:0}
+  .ahead-scene[data-ready].revealed .ahead-marks{animation:ahead-dash .85s both}
+  .ahead-scene[data-ready].revealed h2 span{transition-delay:.57s}
+  .ahead-scene[data-ready].revealed h2 .ahead-word{transition-delay:.91s}
+}
+@keyframes ahead-dash{
+  0%{opacity:0;transform:translateX(-75vw) scaleX(1.26) skewX(-12deg);filter:blur(4px)}
+  12%{opacity:1;animation-timing-function:cubic-bezier(.4,0,.78,.35)}
+  56%{opacity:1;transform:translateX(-7vw) scaleX(1.12) skewX(-7deg);filter:drop-shadow(-13px 0 2px #615ce455) drop-shadow(-20px 0 4px #47cce230);animation-timing-function:ease-out}
+  78%{transform:translateX(6px) scaleX(.98);filter:drop-shadow(-2px 0 1px transparent);animation-timing-function:ease-in-out}
+  100%{opacity:1;transform:translateX(0) scaleX(1);filter:none}
+}
 </style>
 </head>
 <body>
