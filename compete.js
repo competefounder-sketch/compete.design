@@ -42,7 +42,7 @@ if (story) {
   particleMask.append(particles);
 
   const storyMarks = [...story.querySelectorAll('.story-mark')];
-  const storyCopy = [...story.querySelectorAll('.story-copy')];
+  const storyCopy = [...story.querySelectorAll('.story-copy h2')];
   let storyAnimations = [];
   let storyEntered = false;
 
