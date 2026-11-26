@@ -47,7 +47,6 @@ try {
 <canvas class="glow" aria-hidden="true"></canvas>
 <main class="shell" aria-label="COMPETE">
 <div class="landing">
-<a class="page-link" href="./">Home</a>
 <form class="login" data-step="email" novalidate aria-label="Accesso dimostrativo" autocomplete="off">
 <div class="email-field">
 <svg class="field-mark mark-left" viewBox="0 0 205 235" aria-hidden="true"><path d="M0 118 117 0h88L87 118l118 117h-88Z"/></svg>
@@ -139,7 +138,7 @@ if (loginOrigin) {
       {opacity:.9,offset:.28},{transform:'none',opacity:1}],720);
     play(mark,[{opacity:1},{opacity:0}],230);
     play(document.querySelector('.background'),[{clipPath:'inset(48% 44%)',opacity:0},{clipPath:'inset(0% 0%)',opacity:1}],740);
-    for (const el of [field.querySelector('.mark-right'),document.querySelector('.email-hint'),document.querySelector('.page-link')]) {
+    for (const el of [field.querySelector('.mark-right'),document.querySelector('.email-hint')]) {
       play(el,[{opacity:0},{opacity:1}],240,470);
     }
     window.addEventListener('pagehide',finish,{once:true});
