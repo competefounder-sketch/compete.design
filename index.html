@@ -163,6 +163,30 @@
   .house-scene.revealed .house-copy{animation:house-copy-in .32s 1.13s both}
 }
 @keyframes house-copy-in{from{opacity:0}to{opacity:1}}
+
+.motion-study {
+  min-height:100svh;
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  place-items:center;
+  overflow:hidden;
+  overflow:clip;
+}
+.motion-study svg {
+  display:block;
+  width:min(125vw,900px);
+  height:auto;
+  fill:var(--ink);
+}
+.motion-study text {
+  font-family:inherit;
+  font-weight:700;
+  letter-spacing:-.045em;
+  text-anchor:middle;
+}
+@media(prefers-reduced-motion:no-preference){
+  #one-step-ahead .speed-caption { filter:hue-rotate(var(--compete-hue)) }
+}
 </style>
 </head>
 <body>
@@ -290,6 +314,29 @@
   <text class="house-copy" x="168" y="237"><tspan x="168" font-size="54">Free.</tspan><tspan x="168" dy="28" font-size="22">now and <tspan fill="url(#forever-spectrum)">forever</tspan>.</tspan></text>
 </svg>
 </section>
+<section id="one-step-ahead" class="motion-study" lang="en" aria-label="One step ahead.">
+  <svg viewBox="0 0 700 350" role="img" aria-label="One step ahead.">
+    <g class="speed-mark" transform="translate(262 80) scale(.4)"><use href="#ahead-chevron"/></g>
+    <g class="speed-mark" transform="translate(355 80) scale(.4)" fill="url(#ahead-spectrum)"><use href="#ahead-chevron"/></g>
+    <text class="speed-caption" x="350" y="257" font-size="48">One step <tspan fill="url(#better-text-spectrum)">ahead.</tspan></text>
+  </svg>
+</section>
+<section id="invite-a-friend" class="motion-study" lang="en" aria-label="Invite a friend">
+  <svg viewBox="0 0 700 350" role="img" aria-label="Invite a friend">
+    <defs>
+      <path id="invite-route" d="M219 165C288 75 415 253 481 165"/>
+      <mask id="invite-route-reveal" maskUnits="userSpaceOnUse" x="200" y="75" width="300" height="180">
+        <use href="#invite-route" fill="none" stroke="white" stroke-width="9" stroke-linecap="round"/>
+      </mask>
+    </defs>
+    <use href="#invite-route" fill="none" stroke="#85867d" stroke-width="3" stroke-dasharray="3 8" stroke-linecap="round" mask="url(#invite-route-reveal)"/>
+    <use href="#interlock-chevron" transform="translate(148 126) scale(.33)"/>
+    <use class="invite-destination" href="#ahead-chevron" transform="translate(480 126) scale(.33)" fill="url(#ahead-spectrum)"/>
+    <circle class="invite-dot" cx="219" cy="165" r="5" fill="#7451cc" opacity="0"/>
+    <circle class="invite-pulse" cx="495" cy="165" r="5" fill="none" stroke="#926bbc" stroke-width="2" opacity="0"/>
+    <text x="350" y="268" font-size="37">Invite a friend</text>
+  </svg>
+</section>
 </main>
 <script src="compete.js?v=winner-scene" defer></script>
 <script>
@@ -382,6 +429,109 @@ document.querySelector('.login-cta').addEventListener('click', event => {
     scene.dataset.ready = '';
     observer.observe(scene);
   }
+})();
+</script>
+<script>
+(() => {
+  if (!('IntersectionObserver' in window)) return;
+
+  const preference = matchMedia('(prefers-reduced-motion: reduce)');
+  const phase = (frame, from, to) => Math.max(0, Math.min(1, (frame - from) / (to - from)));
+  const smooth = t => t * t * (3 - 2 * t);
+  const easeOut = t => 1 - (1 - t) ** 3;
+
+  // Use the motion lab's 60 fps time scale, independent of display refresh rate.
+  function playOnEntry(section, lastFrame, draw) {
+    let request = 0;
+    let entered = false;
+    function showStill() {
+      cancelAnimationFrame(request);
+      draw(lastFrame);
+    }
+    function play() {
+      cancelAnimationFrame(request);
+      const start = performance.now();
+      draw(0);
+      function tick(now) {
+        const frame = Math.min(lastFrame, (now - start) * 0.06);
+        draw(frame);
+        if (frame < lastFrame) request = requestAnimationFrame(tick);
+      }
+      request = requestAnimationFrame(tick);
+    }
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (entry.intersectionRatio >= 0.3 && !entered) {
+          entered = true;
+          if (!preference.matches) play();
+        } else if (!entry.isIntersecting) {
+          entered = false;
+          cancelAnimationFrame(request);
+          draw(preference.matches ? lastFrame : 0);
+        }
+      }
+    }, {threshold:[0, 0.3]});
+    draw(preference.matches ? lastFrame : 0);
+    observer.observe(section);
+    preference.addEventListener('change', () => {
+      if (preference.matches) showStill();
+      else if (entered) play();
+      else draw(0);
+    });
+  }
+
+  const speed = document.getElementById('one-step-ahead');
+  const caption = speed.querySelector('.speed-caption');
+  const layers = Array.from(speed.querySelectorAll('.speed-mark'), mark => {
+    const copies = [];
+    for (let i = 0; i < 4; i++) {
+      const copy = mark.cloneNode(true);
+      copy.removeAttribute('class');
+      copy.setAttribute('opacity', '0');
+      mark.before(copy);
+      copies.push(copy);
+    }
+    return [...copies, mark];
+  });
+  function position(frame, index) {
+    const start = -210 - 22 * index;
+    const end = 262 + 93 * index;
+    return start + (end - start) * easeOut(phase(frame, 9 + 5 * index, 52 + 3 * index));
+  }
+  playOnEntry(speed, 65, frame => {
+    layers.forEach((copies, index) => {
+      const leadingX = position(frame, index);
+      copies.forEach((copy, j) => {
+        const x = position(frame - (4 - j) * 2.5, index);
+        copy.setAttribute('transform', 'translate(' + x + ' 80) scale(.4)');
+        if (j < 4) copy.setAttribute('opacity', (.035 + j * .045) * Math.min(1, Math.abs(leadingX - x) / 16));
+      });
+    });
+    const reveal = smooth(phase(frame, 37, 62));
+    caption.setAttribute('opacity', reveal);
+    caption.setAttribute('transform', 'translate(0 ' + 10 * (1 - reveal) + ')');
+  });
+
+  const invite = document.getElementById('invite-a-friend');
+  const route = invite.querySelector('#invite-route');
+  const length = route.getTotalLength();
+  const reveal = invite.querySelector('mask use');
+  const dot = invite.querySelector('.invite-dot');
+  const receiver = invite.querySelector('.invite-destination');
+  const ring = invite.querySelector('.invite-pulse');
+  reveal.setAttribute('stroke-dasharray', length + ' ' + length);
+  playOnEntry(invite, 89, frame => {
+    const progress = smooth(phase(frame, 12, 66));
+    const point = route.getPointAtLength(length * progress);
+    reveal.setAttribute('stroke-dashoffset', length * (1 - progress));
+    dot.setAttribute('cx', point.x);
+    dot.setAttribute('cy', point.y);
+    dot.setAttribute('opacity', frame >= 12 && frame < 66 ? 1 : 0);
+    receiver.setAttribute('opacity', .3 + .7 * smooth(phase(frame, 65, 73)));
+    const pulse = phase(frame, 66, 89);
+    ring.setAttribute('r', 5 + 42 * easeOut(pulse));
+    ring.setAttribute('opacity', frame >= 66 ? .65 * (1 - pulse) : 0);
+  });
 })();
 </script>
 </body>
