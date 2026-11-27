@@ -187,9 +187,62 @@
 @media(prefers-reduced-motion:no-preference){
   #one-step-ahead .speed-caption { filter:hue-rotate(var(--compete-hue)) }
 }
+
+.home-grid { overflow:hidden; }
+.home-grid::before {
+  mask-image:linear-gradient(180deg,#000,#0005 38%,#0005 62%,#000);
+}
+.grid-current,.grid-reactions { display:none; }
+@media (prefers-reduced-motion:no-preference) {
+  /* The login's centered 42px tile puts its rules 21px either side of center. */
+  .grid-current {
+    display:block; position:absolute; left:50%; top:50%;
+    width:1px; height:1px; overflow:visible; transform:translate(.5px,.5px);
+    fill:none; stroke:url(#home-grid-spectrum); stroke-width:1.6; stroke-linecap:round;
+  }
+  .grid-current path {
+    stroke-dasharray:10 115; stroke-dashoffset:10;
+    animation:grid-current-run 10s linear infinite;
+  }
+  .grid-current path + path { animation-delay:-5s; }
+  .grid-reactions {
+    display:block; position:absolute; inset:0;
+    mask:linear-gradient(90deg,#000 1px,transparent 1px) center/42px 42px repeat,
+         linear-gradient(#000 1px,transparent 1px) center/42px 42px repeat;
+  }
+  .grid-reactions i { position:absolute; left:0; top:0; opacity:0; }
+  .grid-wake {
+    width:clamp(160px,42vw,360px); height:112px;
+    background:radial-gradient(ellipse closest-side,#a451cf 5%,#5278ea 45%,#30bca888 72%,transparent);
+  }
+  .grid-echo {
+    width:clamp(260px,80vw,520px); aspect-ratio:1;
+    background:radial-gradient(closest-side,transparent 54%,#cb66a9 66%,#7f5ed8 75%,#31aec4 84%,transparent);
+  }
+}
+@keyframes grid-current-run {
+  0% { stroke-dashoffset:10; opacity:0; }
+  7% { opacity:.8; }
+  40% { opacity:.8; }
+  49%,100% { stroke-dashoffset:-101; opacity:0; }
+}
 </style>
 </head>
 <body>
+<div class="background home-grid" aria-hidden="true">
+  <svg class="grid-current" focusable="false">
+    <defs>
+      <linearGradient id="home-grid-spectrum" gradientUnits="userSpaceOnUse" x1="-190" y1="-90" x2="190" y2="90">
+        <stop stop-color="#df657e"/><stop offset=".3" stop-color="#db9d48"/><stop offset=".5" stop-color="#47ab92"/>
+        <stop offset=".72" stop-color="#598cca"/><stop offset="1" stop-color="#a45ec4"/>
+      </linearGradient>
+    </defs>
+    <path pathLength="100" d="M-231 -105H-105V-147H21V-105H147"/>
+    <path pathLength="100" d="M231 105H105V147H-21V105H-147"/>
+  </svg>
+  <div class="grid-reactions"><i class="grid-wake"></i><i class="grid-echo"></i></div>
+  <i class="cross tl"></i><i class="cross tr"></i><i class="cross bl"></i><i class="cross br"></i>
+</div>
 <div class="cursor-light" aria-hidden="true"><b></b></div>
 <main class="shell" aria-label="COMPETE">
 <div class="landing home-hero">
@@ -482,6 +535,18 @@ document.querySelector('.login-cta').addEventListener('click', event => {
 
   const speed = document.getElementById('one-step-ahead');
   const caption = speed.querySelector('.speed-caption');
+  const wake = document.querySelector('.grid-wake');
+  const speedArt = speed.querySelector('svg');
+
+  // Map each study's SVG point into the fixed grid as the page scrolls.
+  function lightGrid(element, svg, x, y, scale, opacity) {
+    element.style.opacity = opacity;
+    if (opacity <= 0) return;
+    const matrix = svg.getScreenCTM();
+    if (!matrix) return;
+    const point = new DOMPoint(x, y).matrixTransform(matrix);
+    element.style.transform = 'translate(' + point.x + 'px,' + point.y + 'px) translate(-50%,-50%) scale(' + scale + ')';
+  }
   const layers = Array.from(speed.querySelectorAll('.speed-mark'), mark => {
     const copies = [];
     for (let i = 0; i < 4; i++) {
@@ -507,6 +572,8 @@ document.querySelector('.login-cta').addEventListener('click', event => {
         if (j < 4) copy.setAttribute('opacity', (.035 + j * .045) * Math.min(1, Math.abs(leadingX - x) / 16));
       });
     });
+    const wakeIntensity = smooth(phase(frame, 12, 24)) * (1 - smooth(phase(frame, 36, 62)));
+    lightGrid(wake, speedArt, position(frame, 1) - 50, 127, 1, .88 * wakeIntensity);
     const reveal = smooth(phase(frame, 37, 62));
     caption.setAttribute('opacity', reveal);
     caption.setAttribute('transform', 'translate(0 ' + 10 * (1 - reveal) + ')');
@@ -520,7 +587,9 @@ document.querySelector('.login-cta').addEventListener('click', event => {
   const receiver = invite.querySelector('.invite-destination');
   const ring = invite.querySelector('.invite-pulse');
   reveal.setAttribute('stroke-dasharray', length + ' ' + length);
-  playOnEntry(invite, 89, frame => {
+  const echo = document.querySelector('.grid-echo');
+  const inviteArt = invite.querySelector('svg');
+  playOnEntry(invite, 126, frame => {
     const progress = smooth(phase(frame, 12, 66));
     const point = route.getPointAtLength(length * progress);
     reveal.setAttribute('stroke-dashoffset', length * (1 - progress));
@@ -531,6 +600,9 @@ document.querySelector('.login-cta').addEventListener('click', event => {
     const pulse = phase(frame, 66, 89);
     ring.setAttribute('r', 5 + 42 * easeOut(pulse));
     ring.setAttribute('opacity', frame >= 66 ? .65 * (1 - pulse) : 0);
+    const wave = phase(frame, 66, 126);
+    const glow = smooth(phase(frame, 66, 72)) * (1 - smooth(wave));
+    lightGrid(echo, inviteArt, 495, 165, .08 + .92 * easeOut(wave), .95 * glow);
   });
 })();
 </script>
