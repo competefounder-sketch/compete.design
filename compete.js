@@ -61,7 +61,7 @@ if (story) {
   addSparks(story.querySelector('h2'),story.querySelector('#better-outer-outline'),54,true);
 
   const storyMarks = [...story.querySelectorAll('.story-mark')];
-  const storyCopy = [...story.querySelectorAll('.story-copy h2')];
+  const storyHeading = story.querySelector('.story-copy h2');
   let storyAnimations = [];
   let storyEntered = false;
 
@@ -77,10 +77,14 @@ if (story) {
         {transform: 'translate3d(0,0,0) rotateY(0deg)', opacity: 1}
       ], {duration: 980, delay: 110, easing: 'cubic-bezier(.16,1,.30,1)', fill: 'backwards'});
     });
-    storyAnimations.push(...storyCopy.map(copy => copy.animate([
+    const titleReveal = storyHeading.animate([
       {opacity: 0, transform: 'translateY(12px)'},
       {opacity: 1, transform: 'translateY(0)'}
-    ], {duration: 460, delay: 455, easing: 'ease-out', fill: 'backwards'})));
+    ], {duration: 460, delay: 455, easing: 'ease-out', fill: 'backwards'});
+    storyAnimations.push(titleReveal);
+    titleReveal.onfinish = () => {
+      if (storyEntered) gridWaves.emit(storyHeading.querySelector('svg'), 3850, -315);
+    };
   }
 
   const storyObserver = new IntersectionObserver(([entry]) => {
@@ -173,6 +177,7 @@ if (interlock && !interlock.hidden) {
         const time = clamp((now - start) / 850);
         drawInterlock(1 - (1 - time) ** 3.4);
         if (time < 1) interlockFrame = requestAnimationFrame(turn);
+        else gridWaves.emit(svg, 285, 253);
       }
       interlockFrame = requestAnimationFrame(turn);
     } else if (entry.intersectionRatio <= .12 && interlockEntered) {
