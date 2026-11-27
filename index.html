@@ -193,6 +193,7 @@
   mask-image:linear-gradient(180deg,#000,#0005 38%,#0005 62%,#000);
 }
 .grid-reactions { display:none; }
+.home-grid:has(+ .glow:not([hidden])) .grid-reactions { visibility:hidden; }
 @media (prefers-reduced-motion:no-preference) {
   .grid-reactions {
     display:block; position:absolute; inset:0;
@@ -365,9 +366,11 @@
 <script>
 const gridWaves = (() => {
   const overlay = document.querySelector('.grid-reactions');
-  const releaseGlow = createJoinGlow(document.querySelector('.glow'));
+  const dots = document.querySelector('.glow');
+  const releaseGlow = createJoinGlow(dots);
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const smooth = t => t * t * (3 - 2 * t);
+  let nextJoinEffect = 'grid';
 
   function create() {
     const wave = document.createElement('i');
@@ -392,6 +395,7 @@ const gridWaves = (() => {
 
   function emit(anchor, x, y) {
     if (reduced.matches) return;
+    dots.hidden = true;
     const wave = create();
     const scene = anchor.closest('section');
     const start = performance.now();
@@ -409,11 +413,19 @@ const gridWaves = (() => {
   }
 
   function join(anchor, x, y) {
-    emit(anchor, x, y);
+    if (reduced.matches) return;
     const scene = anchor.closest('section');
+    const box = scene.getBoundingClientRect();
+    if (box.bottom <= 0 || box.top >= innerHeight) return;
+    if (nextJoinEffect === 'grid') {
+      nextJoinEffect = 'dots';
+      emit(anchor, x, y);
+      return;
+    }
+    nextJoinEffect = 'grid';
     releaseGlow(() => {
       const bounds = scene.getBoundingClientRect();
-      if (bounds.bottom <= 0 || bounds.top >= innerHeight) return null;
+      if (dots.hidden || bounds.bottom <= 0 || bounds.top >= innerHeight) return null;
       const matrix = anchor.getScreenCTM();
       return matrix ? new DOMPoint(x, y).matrixTransform(matrix) : null;
     });
@@ -511,9 +523,9 @@ document.querySelector('.login-cta').addEventListener('click', event => {
   const observer = new IntersectionObserver(entries => {
     for (const entry of entries) {
       if (entry.intersectionRatio >= .3) entry.target.classList.add('revealed');
-      else if (!entry.isIntersecting) entry.target.classList.remove('revealed');
+      else if (entry.intersectionRatio <= .01) entry.target.classList.remove('revealed');
     }
-  }, {threshold:[0,.3]});
+  }, {threshold:[0,.01,.3]});
   // Emit from the leading point, the join, or the roof when the marks settle.
   const impacts = [
     ['#ahead', '.ahead-marks', 'ahead-dash', 'svg', 430, 118, gridWaves.emit],
