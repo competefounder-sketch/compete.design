@@ -177,7 +177,7 @@ if (interlock && !interlock.hidden) {
         const time = clamp((now - start) / 850);
         drawInterlock(1 - (1 - time) ** 3.4);
         if (time < 1) interlockFrame = requestAnimationFrame(turn);
-        else gridWaves.emit(svg, 285, 253);
+        else gridWaves.join(svg, 268, 253);
       }
       interlockFrame = requestAnimationFrame(turn);
     } else if (entry.intersectionRatio <= .12 && interlockEntered) {

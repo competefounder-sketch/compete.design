@@ -212,6 +212,7 @@
   <div class="grid-reactions"></div>
   <i class="cross tl"></i><i class="cross tr"></i><i class="cross bl"></i><i class="cross br"></i>
 </div>
+<canvas class="glow" aria-hidden="true" hidden></canvas>
 <div class="cursor-light" aria-hidden="true"><b></b></div>
 <main class="shell" aria-label="COMPETE">
 <div class="landing home-hero">
@@ -360,9 +361,11 @@
   </svg>
 </section>
 </main>
+<script src="join-glow.js"></script>
 <script>
 const gridWaves = (() => {
   const overlay = document.querySelector('.grid-reactions');
+  const releaseGlow = createJoinGlow(document.querySelector('.glow'));
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const smooth = t => t * t * (3 - 2 * t);
 
@@ -405,10 +408,21 @@ const gridWaves = (() => {
     requestAnimationFrame(tick);
   }
 
-  return {create, draw, emit};
+  function join(anchor, x, y) {
+    emit(anchor, x, y);
+    const scene = anchor.closest('section');
+    releaseGlow(() => {
+      const bounds = scene.getBoundingClientRect();
+      if (bounds.bottom <= 0 || bounds.top >= innerHeight) return null;
+      const matrix = anchor.getScreenCTM();
+      return matrix ? new DOMPoint(x, y).matrixTransform(matrix) : null;
+    });
+  }
+
+  return {create, draw, emit, join};
 })();
 </script>
-<script src="compete.js?v=scene-waves" defer></script>
+<script src="compete.js?v=join-particles" defer></script>
 <script>
 (() => {
   const layer = document.querySelector('.cursor-light');
@@ -502,16 +516,16 @@ document.querySelector('.login-cta').addEventListener('click', event => {
   }, {threshold:[0,.3]});
   // Emit from the leading point, the join, or the roof when the marks settle.
   const impacts = [
-    ['#ahead', '.ahead-marks', 'ahead-dash', 430, 118],
-    ['#together', '.invite-right', 'invite-arrive', 211, 12],
-    ['#house', '.house-pair', 'house-drop', 168, 118]
+    ['#ahead', '.ahead-marks', 'ahead-dash', 'svg', 430, 118, gridWaves.emit],
+    ['#together', '.invite-right', 'invite-arrive', 'svg', 211, 12, gridWaves.join],
+    ['#house', '.house-right', 'house-right', '.house-pair', 168, 118, gridWaves.join]
   ];
-  for (const [id, selector, animation, x, y] of impacts) {
+  for (const [id, selector, animation, anchor, x, y, impact] of impacts) {
     const scene = document.querySelector(id);
-    const art = scene.querySelector('svg');
+    const art = scene.querySelector(anchor);
     scene.querySelector(selector).addEventListener('animationend', event => {
       if (event.animationName === animation && scene.classList.contains('revealed')) {
-        gridWaves.emit(art, x, y);
+        impact(art, x, y);
       }
     });
     scene.dataset.ready = '';

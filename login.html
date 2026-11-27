@@ -44,7 +44,7 @@ try {
 </head>
 <body>
 <div class="background" aria-hidden="true"><i class="cross tl" aria-hidden="true"></i><i class="cross tr" aria-hidden="true"></i><i class="cross bl" aria-hidden="true"></i><i class="cross br" aria-hidden="true"></i></div>
-<canvas class="glow" aria-hidden="true"></canvas>
+<canvas class="glow" aria-hidden="true" hidden></canvas>
 <main class="shell" aria-label="COMPETE">
 <div class="landing">
 <form class="login" data-step="email" novalidate aria-label="Accesso dimostrativo" autocomplete="off">
@@ -146,6 +146,7 @@ if (loginOrigin) {
   } catch { finish(); }
 }
 </script>
-<script src="login-demo.js"></script>
+<script src="join-glow.js"></script>
+<script src="login-demo.js?v=shared-join"></script>
 </body>
 </html>
